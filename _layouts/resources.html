@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="{{ page.lang }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ page.title | escape }} | Kento Takahara</title>
+    <link rel="alternate" hreflang="ja" href="resources.html">
+    <link rel="alternate" hreflang="en" href="resources-en.html">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    {% if page.lang == 'en' %}
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    {% else %}
+    <a class="skip-link" href="#main-content">本文へ移動</a>
+    {% endif %}
+    <header class="site-header">
+      <div class="header-inner">
+        {% if page.lang == 'en' %}
+        <a class="site-name" href="index-en.html"><strong>高原 賢都 / Kento Takahara</strong></a>
+        <nav aria-label="Primary navigation">
+          <a href="index-en.html#about">About</a>
+          <a href="index-en.html#publications">Publications</a>
+          <a href="career-en.html">Career</a>
+          <a href="news-en.html">News</a>
+          <a href="resources-en.html" aria-current="page">Materials</a>
+          <a href="index-en.html#links">Links</a>
+        </nav>
+        <div class="language-switch" aria-label="Display language">
+          <a href="resources.html" lang="ja">日本語</a><span aria-hidden="true"> / </span><span aria-current="true">English</span>
+        </div>
+        {% else %}
+        <a class="site-name" href="index.html"><strong>高原 賢都 / Kento Takahara</strong></a>
+        <nav aria-label="メインナビゲーション">
+          <a href="index.html#about">自己紹介</a>
+          <a href="index.html#publications">論文</a>
+          <a href="career.html">経歴</a>
+          <a href="news.html">お知らせ</a>
+          <a href="resources.html" aria-current="page">資料</a>
+          <a href="index.html#links">リンク</a>
+        </nav>
+        <div class="language-switch" aria-label="表示言語">
+          <span aria-current="true">日本語</span><span aria-hidden="true"> / </span><a href="resources-en.html" lang="en">English</a>
+        </div>
+        {% endif %}
+      </div>
+    </header>
+    <main id="main-content">
+      <section class="intro" aria-labelledby="page-title">
+        <div class="container">
+          <h1 id="page-title">{{ page.title | escape }}</h1>
+          {% if page.lang == 'en' %}
+          <p class="lead">PDF slides, notes, and handouts. Select a file name or URL to open the PDF.</p>
+          <a href="#materials">Materials</a> / <a href="#handouts">Handouts</a>
+          {% else %}
+          <p class="lead">発表スライドやノート、配布資料を掲載しています。ファイル名または URL から PDF を開けます。</p>
+          <a href="#materials">資料</a> / <a href="#handouts">配布資料</a>
+          {% endif %}
+        </div>
+      </section>
+      <section class="section" id="materials" aria-labelledby="materials-title">
+        <div class="container section-layout">
+          <div class="section-heading">
+            <h2 id="materials-title">{% if page.lang == 'en' %}Materials{% else %}資料{% endif %}</h2>
+          </div>
+          <div class="section-body">
+            {% include pdf-list.html folder="materials" %}
+          </div>
+        </div>
+      </section>
+      <section class="section" id="handouts" aria-labelledby="handouts-title">
+        <div class="container section-layout">
+          <div class="section-heading">
+            <h2 id="handouts-title">{% if page.lang == 'en' %}Handouts{% else %}配布資料{% endif %}</h2>
+          </div>
+          <div class="section-body">
+            {% include pdf-list.html folder="handouts" %}
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p>© 2026 {% if page.lang == 'en' %}Kento Takahara{% else %}高原 賢都{% endif %}</p>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,26 @@
+{%- assign prefix = include.folder | prepend: '/' | append: '/' -%}
+{%- assign prefix_length = prefix | size -%}
+{%- assign files = site.static_files | sort: 'path' -%}
+{%- assign pdf_count = 0 -%}
+{%- capture pdf_items -%}
+  {%- for file in files -%}
+    {%- assign file_prefix = file.path | slice: 0, prefix_length -%}
+    {%- assign extension = file.extname | downcase -%}
+    {%- if file_prefix == prefix and extension == '.pdf' -%}
+      {%- assign pdf_count = pdf_count | plus: 1 -%}
+      {%- assign encoded_path = file.path | url_encode | replace: '+', '%20' | replace: '%2F', '/' -%}
+      {%- assign pdf_url = encoded_path | absolute_url -%}
+      <li>
+        <a class="pdf-name" href="{{ pdf_url | escape }}">{{ file.name | escape }}</a>
+        <p class="pdf-path">{{ file.path | remove_first: prefix | escape }}</p>
+        <a class="pdf-url" href="{{ pdf_url | escape }}"><code>{{ pdf_url | escape }}</code></a>
+      </li>
+    {%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+{% if pdf_count > 0 %}
+<p class="pdf-count">{% if page.lang == 'en' %}{{ pdf_count }} PDF files{% else %}PDF {{ pdf_count }}件{% endif %}</p>
+<ul class="entry-list pdf-list">{{ pdf_items }}</ul>
+{% else %}
+<p>{% if page.lang == 'en' %}No PDF files are available yet.{% else %}PDF はまだありません。{% endif %}</p>
+{% endif %}
