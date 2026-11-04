@@ -1,0 +1,49 @@
+{%- assign handout_files = site.static_files | sort: 'path' -%}
+{%- assign handout_root = '/handouts/' -%}
+{%- assign handout_root_length = handout_root | size -%}
+{%- capture handout_category_keys -%}
+  {%- for handout_file in handout_files -%}
+    {%- assign handout_prefix = handout_file.path | slice: 0, handout_root_length -%}
+    {%- assign handout_extension = handout_file.extname | downcase -%}
+    {%- if handout_prefix == handout_root and handout_extension == '.pdf' -%}
+      {%- assign handout_parts = handout_file.path | remove_first: handout_root | split: '/' -%}
+      {%- if handout_parts.size == 1 -%}
+        /
+      {%- else -%}
+        {{- handout_parts.first | url_encode -}}
+      {%- endif -%}
+      {{- '|' -}}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+{%- assign handout_categories = handout_category_keys | split: '|' | uniq | sort -%}
+{% if handout_categories.size > 0 %}
+<div class="handout-categories" data-handout-tabs data-category-label="{% if page.lang == 'en' %}Handout categories{% else %}配布資料のカテゴリ{% endif %}">
+  <p class="handout-hint">{% if page.lang == 'en' %}Select a category to show its PDFs. Select it again to close the list.{% else %}カテゴリをクリックすると PDF 一覧が開きます。もう一度クリックすると閉じます。{% endif %}</p>
+  {% for handout_category_key in handout_categories %}
+    {%- assign handout_category = handout_category_key | url_decode -%}
+    {%- capture handout_category_title -%}
+      {%- if handout_category_key == '/' -%}
+        {%- if page.lang == 'en' -%}Other handouts{%- else -%}その他{%- endif -%}
+      {%- elsif handout_category == 'Lie Algebra' and page.lang != 'en' -%}
+        Lie代数
+      {%- else -%}
+        {{- handout_category -}}
+      {%- endif -%}
+    {%- endcapture -%}
+  <details class="handout-category" name="handout-category">
+    <summary id="handout-category-{{ forloop.index }}">{{ handout_category_title | escape }}</summary>
+    <div class="handout-panel" id="handout-panel-{{ forloop.index }}" role="region" aria-labelledby="handout-category-{{ forloop.index }}">
+      {% if handout_category_key == '/' %}
+        {% include pdf-list.html folder="handouts" direct_only=true %}
+      {% else %}
+        {% assign handout_folder = handout_category | prepend: 'handouts/' %}
+        {% include pdf-list.html folder=handout_folder %}
+      {% endif %}
+    </div>
+  </details>
+  {% endfor %}
+</div>
+{% else %}
+<p>{% if page.lang == 'en' %}No PDF files are available yet.{% else %}PDF はまだありません。{% endif %}</p>
+{% endif %}

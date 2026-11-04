@@ -5,6 +5,11 @@
 - 発表スライドや資料は `materials/` に追加します。
 - 配布資料やノートは `handouts/` に追加します。
 - サブフォルダも対象です。例：`materials/workshop/example.pdf`。
+- 配布資料は `handouts/` 直下のフォルダごとにカテゴリのタブを自動生成します。
+  例：`handouts/Lie Algebra/` は日本語版では「Lie代数」、英語版では「Lie Algebra」と表示します。
+  最初は一覧を閉じ、タブをクリックしたときだけ、そのカテゴリの PDF を表示します。
+  別のタブをクリックすると一覧を切り替え、同じタブを再クリックすると閉じます。
+  フォルダ内のサブフォルダも同じカテゴリに含み、`handouts/` 直下の PDF は「その他」にまとめます。
 - GitHub でアップロードし、`main` にコミットすると、GitHub Pages のビルド完了後に
   [資料一覧](https://grad31415.github.io/homepage/resources.html) と
   [英語の一覧](https://grad31415.github.io/homepage/resources-en.html) が自動更新されます。

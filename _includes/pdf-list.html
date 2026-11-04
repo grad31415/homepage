@@ -7,6 +7,10 @@
     {%- assign file_prefix = file.path | slice: 0, prefix_length -%}
     {%- assign extension = file.extname | downcase -%}
     {%- if file_prefix == prefix and extension == '.pdf' -%}
+      {%- assign relative_parts = file.path | remove_first: prefix | split: '/' -%}
+      {%- if include.direct_only and relative_parts.size != 1 -%}
+        {%- continue -%}
+      {%- endif -%}
       {%- assign pdf_count = pdf_count | plus: 1 -%}
       {%- assign encoded_path = file.path | url_encode | replace: '+', '%20' | replace: '%2F', '/' -%}
       {%- assign pdf_url = encoded_path | absolute_url -%}
