@@ -6,13 +6,14 @@
     <title>Kento Takahara's Website</title>
     <link rel="alternate" hreflang="en" href="index-en.html">
     <link rel="stylesheet" href="style.css">
+    <script defer src="assets/recent-news.js"></script>
   </head>
-  <body>
+  <body class="academic-page home-page">
     <a class="skip-link" href="#main-content">本文へ移動</a>
 
     <header class="site-header">
       <div class="header-inner">
-        <a class="site-name" href="index.html"><strong>高原 賢都 / Kento Takahara</strong></a>
+        <a class="site-name" href="index.html"><strong><span class="name-ja" lang="ja">高原 賢都</span> / Kento Takahara</strong></a>
         <nav aria-label="メインナビゲーション">
           <a href="#about">自己紹介</a>
           <a href="#publications">論文</a>
@@ -28,45 +29,35 @@
     </header>
 
     <main id="main-content">
-      <section class="intro" aria-labelledby="profile-title">
-        <div class="container">
-          <h1 id="profile-title">高原 賢都 / Kento Takahara</h1>
+      <section class="intro" id="about" aria-labelledby="profile-title">
+        <div class="container" id="about-title">
+          <h1 id="profile-title"><span class="name-ja" lang="ja">高原 賢都</span> <span class="name-en">/ Kento Takahara</span></h1>
           <p class="role">千葉大学 理学部 先進科学プログラム 先進物理学コース 3年</p>
-          <p class="lab">千葉大学素粒子論研究室</p>
-          <p class="lead">
-            現在は千葉大学素粒子論研究室でScattering amplitude の研究に取り組んでいます。場の理論やそれに付随する幾何学などにも興味があります。
-          </p>
+          <p class="lab">千葉大学素粒子論研究室（指導教員：北原鉄平）</p>
+          <div class="biography">
+            <p>現在は散乱振幅（scattering amplitudes）の研究に取り組んでいます。場の理論や、それに付随する幾何学にも興味があります。</p>
+          </div>
         </div>
       </section>
-
-      <section class="section" id="about" aria-labelledby="about-title">
+      <section class="section recent-news" aria-labelledby="news-title">
         <div class="container section-layout">
-          <div class="section-heading">
-            <h2 id="about-title">自己紹介</h2>
+          <div class="section-heading news-heading">
+            <h2 id="news-title">お知らせ</h2>
+            <a data-news-source href="news.html">一覧を見る</a>
           </div>
-          <div class="section-body">
-            <dl class="facts">
-              <div>
-                <dt>氏名</dt>
-                <dd>高原 賢都</dd>
-              </div>
-              <div>
-                <dt>所属</dt>
-                <dd>千葉大学 理学部 先進科学プログラム 先進物理学コース</dd>
-              </div>
-              <div>
-                <dt>学年</dt>
-                <dd>3年</dd>
-              </div>
-              <div>
-                <dt>指導教員</dt>
-                <dd>北原鉄平</dd>
-              </div>
-            </dl>
+          <div class="news-window" role="region" aria-labelledby="news-title" tabindex="0">
+            <ul class="news-list">
+            <li><time datetime="2026-09-14">2026/09/14</time><span>日本物理学会第81回年次大会で一般講演をしました</span></li>
+            <li><time datetime="2026-09-07">2026/09/07</time><span>数物セミナー31st 特別講演の<a href="数物セミナー特別講演.pdf" target="_blank" rel="noreferrer">スライド</a>を上げました</span></li>
+            <li><time datetime="2026-08-28">2026/08/28</time><span>基研研究会-素粒子物理学の進展(PPP)2026に参加しました。口頭発表のスライドは<a href="https://indico.yukawa.kyoto-u.ac.jp/event/95/contributions/2133/" target="_blank" rel="noreferrer">こちら</a>です。</span></li>
+            <li><time datetime="2026-08-17">2026/08/17</time><span>ホームページを作成しました</span></li>
+            <li><time datetime="2026-08-12">2026/08/12</time><span><a href="https://arxiv.org/abs/2608.11703" target="_blank" rel="noreferrer">プレプリント</a>をarXivに投稿しました</span></li>
+            <li><time datetime="2026-08-06">2026/08/06</time><span>第72回原子核三者若手夏の学校に参加してきました</span></li>
+            <li><time datetime="2026-07-30">2026/07/30</time><span><a href="https://www.cfs.chiba-u.ac.jp/early_admission/files/pdf/brochure2027.pdf" target="_blank" rel="noreferrer">千葉大学先進科学プログラムのパンフレット</a>が発行されました。私も少し載っています。興味がある方はご覧ください</span></li>
+          </ul>
           </div>
         </div>
       </section>
-
       <section class="section" id="publications" aria-labelledby="publications-title">
         <div class="container section-layout">
           <div class="section-heading">

@@ -6,13 +6,14 @@
     <title>Kento Takahara's Website</title>
     <link rel="alternate" hreflang="ja" href="index.html">
     <link rel="stylesheet" href="style.css">
+    <script defer src="assets/recent-news.js"></script>
   </head>
-  <body>
+  <body class="academic-page home-page">
     <a class="skip-link" href="#main-content">Skip to content</a>
 
     <header class="site-header">
       <div class="header-inner">
-        <a class="site-name" href="index-en.html"><strong>高原 賢都 / Kento Takahara</strong></a>
+        <a class="site-name" href="index-en.html"><strong><span class="name-ja" lang="ja">高原 賢都</span> / Kento Takahara</strong></a>
         <nav aria-label="Primary navigation">
           <a href="#about">About</a>
           <a href="#publications">Publications</a>
@@ -28,43 +29,35 @@
     </header>
 
     <main id="main-content">
-      <section class="intro" aria-labelledby="profile-title">
-        <div class="container">
-          <h1 id="profile-title">高原 賢都 / Kento Takahara</h1>
-          <p class="role">Third-year student, Advanced Physics Course, Center for Frontier Science, Chiba University</p>
-          <p class="lab">Chiba Particle Physics Group (CPP), Chiba University</p>
-          <p class="lead">I am currently conducting research on scattering amplitudes at the Chiba Particle Physics Group (CPP), Chiba University. I am also interested in quantum field theory and related geometry.</p>
+      <section class="intro" id="about" aria-labelledby="profile-title">
+        <div class="container" id="about-title">
+          <h1 id="profile-title"><span class="name-ja" lang="ja">高原 賢都</span> <span class="name-en">/ Kento Takahara</span></h1>
+          <p class="role">Third-year student, Advanced Physics Course, Advanced Science Program, Faculty of Science, Chiba University</p>
+          <p class="lab">Center for Frontier Science · Chiba Particle Physics Group (CPP), Chiba University<br>Supervisor: Teppei Kitahara</p>
+          <div class="biography">
+            <p>I study scattering amplitudes. I am also interested in quantum field theory and related geometry.</p>
+          </div>
         </div>
       </section>
-
-      <section class="section" id="about" aria-labelledby="about-title">
+      <section class="section recent-news" aria-labelledby="news-title">
         <div class="container section-layout">
-          <div class="section-heading">
-            <h2 id="about-title">About</h2>
+          <div class="section-heading news-heading">
+            <h2 id="news-title">News</h2>
+            <a data-news-source href="news-en.html">All news</a>
           </div>
-          <div class="section-body">
-            <dl class="facts">
-              <div>
-                <dt>Name</dt>
-                <dd>Kento Takahara</dd>
-              </div>
-              <div>
-                <dt>Affiliation</dt>
-                <dd>Advanced Physics Course, Advanced Science Program, Faculty of Science, Chiba University</dd>
-              </div>
-              <div>
-                <dt>Year</dt>
-                <dd>Third year</dd>
-              </div>
-              <div>
-                <dt>Supervisor</dt>
-                <dd>Teppei Kitahara</dd>
-              </div>
-            </dl>
+          <div class="news-window" role="region" aria-labelledby="news-title" tabindex="0">
+            <ul class="news-list">
+            <li><time datetime="2026-09-14">2026/09/14</time><span>Gave a contributed talk at the 81st Annual Meeting of the Physical Society of Japan</span></li>
+            <li><time datetime="2026-09-07">2026/09/07</time><span>Uploaded the <a href="数物セミナー特別講演.pdf" target="_blank" rel="noreferrer">slides</a> for the 31st Suubutsu Seminar special lecture</span></li>
+            <li><time datetime="2026-08-28">2026/08/28</time><span>Participated in the YITP workshop “Progress in Particle Physics (PPP) 2026.” The slides from my oral presentation are available <a href="https://indico.yukawa.kyoto-u.ac.jp/event/95/contributions/2133/" target="_blank" rel="noreferrer">here</a>.</span></li>
+            <li><time datetime="2026-08-17">2026/08/17</time><span>Launched this website</span></li>
+            <li><time datetime="2026-08-12">2026/08/12</time><span>Submitted a <a href="https://arxiv.org/abs/2608.11703" target="_blank" rel="noreferrer">preprint</a> to arXiv</span></li>
+            <li><time datetime="2026-08-06">2026/08/06</time><span>Participated in the 72nd Summer School for Young Researchers in Nuclear and Particle Physics</span></li>
+            <li><time datetime="2026-07-30">2026/07/30</time><span>The <a href="https://www.cfs.chiba-u.ac.jp/early_admission/files/pdf/brochure2027.pdf" target="_blank" rel="noreferrer">brochure for Chiba University's Advanced Science Program</a> has been published. I am also featured briefly. Please have a look if you are interested</span></li>
+          </ul>
           </div>
         </div>
       </section>
-
       <section class="section" id="publications" aria-labelledby="publications-title">
         <div class="container section-layout">
           <div class="section-heading">

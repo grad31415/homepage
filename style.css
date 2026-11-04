@@ -586,3 +586,109 @@ nav a[aria-current="page"] {
     scroll-behavior: auto;
   }
 }
+
+/* Bilingual home page */
+.academic-page {
+  --navy: #44494d;
+  --text: #44494d;
+  --muted: #62676a;
+  --line: #d8d9d9;
+  --column: min(clamp(40rem, 60vw, 62rem), calc(100% - 2.5rem));
+  font-family: Meiryo, Arial, sans-serif;
+  line-height: 1.75;
+}
+.academic-page :is(.container, .header-inner) { width: var(--column); }
+.academic-page .header-inner {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: .65rem 1rem;
+  padding: 1.1rem 0 .85rem;
+}
+.academic-page .site-name strong { text-transform: none; letter-spacing: 0; }
+.academic-page .language-switch { grid-area: 1 / 2; }
+.academic-page nav { grid-column: 1 / -1; flex-wrap: wrap; gap: .25rem 1.4rem; }
+.academic-page nav a { letter-spacing: 0; }
+.academic-page .intro { padding: 2.5rem 0 1.8rem; border: 0; }
+.academic-page .intro h1 { font-size: clamp(1.55rem, 3vw, 2rem); margin-bottom: .8rem; }
+.academic-page .intro h1 .name-en { display: inline-block; font-size: .76em; font-weight: 400; }
+.academic-page :is(.role, .lab) { margin: 0; font-weight: 400; }
+.academic-page .biography { max-width: 72ch; margin-top: 1rem; }
+.academic-page .biography p { margin: .65em 0 0; }
+.academic-page .section { padding: 0; border: 0; background: white; }
+.academic-page .section-layout {
+  border-top: 1px solid var(--line);
+  display: block;
+  padding: 1.25rem 0 1.45rem;
+}
+.academic-page .section-heading h2 { font-size: 1.25rem; margin-bottom: .65rem; }
+.academic-page :is(.history-list, .entry-list) { border: 0; }
+.academic-page .history-list li {
+  grid-template-columns: 3rem minmax(0, 1fr);
+  gap: .8rem;
+  padding: .15rem 0;
+  border: 0;
+}
+.academic-page .history-list h3 { font-size: 1rem; line-height: 1.55; }
+.academic-page .history-list p { color: var(--muted); }
+.academic-page .entry-list { padding-left: 1.2rem; list-style: disc; }
+.academic-page .entry-list li { padding: .18rem 0; border: 0; }
+.academic-page .link-list { margin: 0; padding-left: 1.2rem; font-size: .9rem; }
+.academic-page .site-footer { padding: 0; }
+.academic-page .footer-inner { border-top: 1px solid var(--line); padding: .85rem 0; }
+@media (max-width: 460px) {
+  .academic-page .header-inner { gap: .5rem; }
+  .academic-page .site-name strong { white-space: normal; font-size: .84rem; }
+  .academic-page nav { gap: .25rem 1rem; }
+  .academic-page .intro { padding: 1.8rem 0 1.4rem; }
+  .academic-page .history-list li { grid-template-columns: 1fr; gap: .1rem; }
+}
+
+.academic-page .site-name strong,
+.home-page #profile-title { font-weight: 400; }
+.academic-page .news-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+.academic-page .news-heading > a { font-size: .82rem; }
+.academic-page .news-window {
+  max-height: 9rem;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  border: 1px solid var(--line);
+  padding: .2rem .85rem;
+}
+.academic-page .news-window:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+.academic-page .news-list { margin: 0; padding: 0; list-style: none; }
+.academic-page .news-list li {
+  display: grid;
+  grid-template-columns: 6.4rem minmax(0, 1fr);
+  gap: .55rem;
+  padding: .55rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.academic-page .news-list li:last-child { border-bottom: 0; }
+.academic-page .news-list time { color: var(--muted); margin: 0; font-variant-numeric: tabular-nums; }
+.academic-page .news-window .news-list { font-size: .9rem; }
+.academic-page:not(.home-page) main { padding-bottom: 1.25rem; }
+.academic-page:not(.home-page) .intro h1 { font-weight: 500; }
+.academic-page:not(.home-page) .intro .lead { margin: .6rem 0; }
+.academic-page.career-page .history-list li {
+  grid-template-columns: 11rem minmax(0, 1fr);
+  padding: .6rem 0;
+}
+.academic-page .pdf-list { list-style: none; padding: 0; }
+.academic-page .pdf-list li { padding: .6rem 0; border-bottom: 1px solid var(--line); }
+.academic-page .handout-tab { padding: .3rem .75rem; }
+@media (max-width: 540px) {
+  .academic-page .news-list li,
+  .academic-page.career-page .history-list li { grid-template-columns: 1fr; gap: .05rem; }
+  .academic-page .news-list time { font-size: .8rem; }
+}
+
+.academic-page .name-ja {
+  font-family: "Yu Gothic Medium", "Yu Gothic", YuGothic, Meiryo, sans-serif;
+  font-weight: 400;
+}

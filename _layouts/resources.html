@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="assets/handout-tabs.js" defer></script>
   </head>
-  <body>
+  <body class="academic-page">
     {% if page.lang == 'en' %}
     <a class="skip-link" href="#main-content">Skip to content</a>
     {% else %}
@@ -18,7 +18,7 @@
     <header class="site-header">
       <div class="header-inner">
         {% if page.lang == 'en' %}
-        <a class="site-name" href="index-en.html"><strong>高原 賢都 / Kento Takahara</strong></a>
+        <a class="site-name" href="index-en.html"><strong><span class="name-ja" lang="ja">高原 賢都</span> / Kento Takahara</strong></a>
         <nav aria-label="Primary navigation">
           <a href="index-en.html#about">About</a>
           <a href="index-en.html#publications">Publications</a>
@@ -31,7 +31,7 @@
           <a href="resources.html" lang="ja">日本語</a><span aria-hidden="true"> / </span><span aria-current="true">English</span>
         </div>
         {% else %}
-        <a class="site-name" href="index.html"><strong>高原 賢都 / Kento Takahara</strong></a>
+        <a class="site-name" href="index.html"><strong><span class="name-ja" lang="ja">高原 賢都</span> / Kento Takahara</strong></a>
         <nav aria-label="メインナビゲーション">
           <a href="index.html#about">自己紹介</a>
           <a href="index.html#publications">論文</a>
