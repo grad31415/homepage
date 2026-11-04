@@ -320,6 +320,64 @@ nav a[aria-current="page"] {
   font-family: Consolas, monospace;
 }
 
+.handout-hint {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.handout-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.handout-tab,
+.handout-category > summary {
+  padding: 9px 18px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--soft);
+  color: var(--navy);
+  font: inherit;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+.handout-tab {
+  max-width: 100%;
+}
+
+.handout-tab:hover,
+.handout-category > summary:hover {
+  border-color: var(--navy);
+}
+
+.handout-tab[aria-expanded="true"] {
+  border-color: var(--navy);
+  background: var(--navy);
+  color: var(--paper);
+}
+
+.handout-tab:focus-visible,
+.handout-category > summary:focus-visible {
+  outline: 2px solid var(--navy);
+  outline-offset: 4px;
+}
+
+.handout-category {
+  margin-top: 8px;
+}
+
+.handout-panel {
+  padding-top: 20px;
+}
+
+.is-enhanced > .handout-category > summary,
+.is-enhanced > .handout-category:not([open]) {
+  display: none;
+}
+
 .activity-groups {
   display: grid;
   gap: 34px;

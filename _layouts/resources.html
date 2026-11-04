@@ -7,6 +7,7 @@
     <link rel="alternate" hreflang="ja" href="resources.html">
     <link rel="alternate" hreflang="en" href="resources-en.html">
     <link rel="stylesheet" href="style.css">
+    <script src="assets/handout-tabs.js" defer></script>
   </head>
   <body>
     {% if page.lang == 'en' %}
@@ -74,7 +75,7 @@
             <h2 id="handouts-title">{% if page.lang == 'en' %}Handouts{% else %}配布資料{% endif %}</h2>
           </div>
           <div class="section-body">
-            {% include pdf-list.html folder="handouts" %}
+            {% include handout-tabs.html %}
           </div>
         </div>
       </section>
