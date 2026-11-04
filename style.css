@@ -689,6 +689,22 @@ nav a[aria-current="page"] {
 }
 
 .academic-page .name-ja {
-  font-family: "Yu Mincho", YuMincho, "Hiragino Mincho ProN", "MS PMincho", serif;
+  font-family: "BIZ UDPMincho Medium", "Yu Mincho", YuMincho, "Hiragino Mincho ProN", "MS PMincho", serif;
   font-weight: 400;
+}
+
+.home-page .profile-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 30%;
+  align-items: start;
+  gap: clamp(1rem, 2vw, 2rem);
+}
+.home-page .profile-photo {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+@media (max-width: 680px) {
+  .home-page .profile-layout { grid-template-columns: minmax(0, 1fr); gap: .8rem; }
+  .home-page .profile-photo { width: min(100%, 16rem); }
 }
