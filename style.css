@@ -689,6 +689,6 @@ nav a[aria-current="page"] {
 }
 
 .academic-page .name-ja {
-  font-family: "Yu Gothic Medium", "Yu Gothic", YuGothic, Meiryo, sans-serif;
+  font-family: "Yu Mincho", YuMincho, "Hiragino Mincho ProN", "MS PMincho", serif;
   font-weight: 400;
 }
