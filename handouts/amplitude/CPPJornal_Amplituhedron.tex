@@ -1,0 +1,2594 @@
+% Build: latexmk (upLaTeX -> dvipdfmx); save this file as UTF-8.
+% UTF-8 / upLaTeX -> dvipdfmx
+\documentclass[uplatex,dvipdfmx,a4paper,11pt]{jsarticle}
+% 以下は旧 simple-notes.sty の設定です。独自の .sty ファイルは不要です。
+\makeatletter
+% UTF-8 / upLaTeX + dvipdfmx / jsarticle
+
+% ---- Mathematics: existing commands remain available -----------------
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{amsthm} % Must follow amsmath.
+\usepackage{bm,mathtools,ascmac,mathrsfs,physics,here,url,tikz-cd}
+
+% Feynman diagrams: arrows, line markings, and wavy photon lines.
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,decorations.markings,decorations.pathmorphing}
+
+
+% ---- Page and typography ---------------------------------------------
+\usepackage[
+  truedimen,a4paper,
+  top=25truemm,bottom=28truemm,
+  left=23truemm,right=23truemm
+]{geometry}
+\linespread{1.06}
+\setlength{\parindent}{1zw}
+\setlength{\parskip}{0pt plus 0.2pt}
+\setlength{\emergencystretch}{1em}
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
+\allowdisplaybreaks[1]
+\raggedbottom
+\pagestyle{plain}
+
+\usepackage{titlesec}
+\titleformat{\section}
+  {\normalfont\Large\bfseries}{\thesection}{0.75em}{}
+\titleformat{\subsection}
+  {\normalfont\large\bfseries}{\thesubsection}{0.75em}{}
+\titleformat{\subsubsection}
+  {\normalfont\normalsize\bfseries}{\thesubsubsection}{0.75em}{}
+\titlespacing*{\section}
+  {0pt}{2.5ex plus 0.6ex minus 0.3ex}{1.2ex plus 0.2ex}
+\titlespacing*{\subsection}
+  {0pt}{2ex plus 0.4ex minus 0.2ex}{0.8ex plus 0.2ex}
+\titlespacing*{\subsubsection}
+  {0pt}{1.5ex plus 0.3ex minus 0.2ex}{0.6ex plus 0.1ex}
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
+
+% ---- White, square-cornered theorem boxes -----------------------------
+\usepackage{xcolor}
+\usepackage{etoolbox,varwidth}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable,hooks}
+
+% Change these colors here to restyle all environments at once.
+\definecolor{NoteTheorem}{HTML}{683439}
+\definecolor{NoteProposition}{HTML}{2A4559}
+\definecolor{NoteCorollary}{HTML}{544260}
+\definecolor{NoteDefinition}{HTML}{324E42}
+\definecolor{NoteLemma}{HTML}{2A4559}
+\definecolor{NoteExample}{HTML}{444444}
+\definecolor{NoteExercise}{HTML}{34565C}
+
+% A single sequence for all seven environments, reset by \section.
+\newcounter{notestatement}[section]
+\renewcommand{\thenotestatement}{\thesection.\arabic{notestatement}}
+
+\tcbset{
+  note box/.style={
+    enhanced jigsaw,
+    breakable,
+    sharp corners,
+    colback=white,
+    colbacktitle=white,
+    coltitle=black,
+    fontupper=\normalfont,
+    fonttitle=\normalfont\normalsize\bfseries,
+    boxrule=0.6pt,
+    boxsep=0pt,
+    left=4mm,
+    right=4mm,
+    top=4mm,
+    bottom=3mm,
+    before skip=12pt plus 2pt minus 1pt,
+    after skip=10pt plus 2pt minus 1pt,
+    varwidth boxed title*=-12mm,
+    attach boxed title to top left={xshift=3mm,yshift*=-2mm},
+    boxed title style={
+      enhanced,
+      sharp corners,
+      colback=white,
+      colframe=white,
+      boxrule=0pt,
+      boxsep=0pt,
+      left=1.2mm,
+      right=1.2mm,
+      top=0.5mm,
+      bottom=0.5mm
+    },
+    pad at break*=2mm,
+    lines before break=3,
+    title after break={\tcbtitletext\ {\normalfont\itshape(continued)}}
+  }
+}
+
+% {Title} is mandatory, as in the old template; use {} for no subtitle.
+% [options] accepts the same tcolorbox keys as before, including label=...
+\newcommand{\NoteBoxHeading}[2]{%
+  #1~\thenotestatement
+  \ifstrempty{#2}{}{\enspace{\normalfont #2}}%
+}
+\newcommand{\DeclareNoteBox}[3]{%
+  \newtcolorbox[use counter*=notestatement]{#1}[2][]{%
+    note box,
+    colframe=#3,
+    title={\NoteBoxHeading{#2}{##2}},
+    ##1,
+    % Set the body label without changing the counter or its anchor.
+    % Prepend after user options so before upper=... can still be used.
+    before upper pre={%
+      \protected@edef\@currentlabel{\p@notestatement\thenotestatement}%
+    }
+  }%
+}
+\DeclareNoteBox{mythm}{Theorem}{NoteTheorem}
+\DeclareNoteBox{myprop}{Proposition}{NoteProposition}
+\DeclareNoteBox{mycor}{Corollary}{NoteCorollary}
+\DeclareNoteBox{mydef}{Definition}{NoteDefinition}
+\DeclareNoteBox{mylemma}{Lemma}{NoteLemma}
+\DeclareNoteBox{myex}{Example}{NoteExample}
+\DeclareNoteBox{myexercise}{Exercise}{NoteExercise}
+
+% Optional compatibility mode for old notes whose {argument} already
+% contains a manually assigned number. New notes should use auto numbering.
+% Activate in the preamble with \UseLegacyNoteTitles.
+% In this mode, \label/\ref still refer to the automatic counter.
+\newcommand{\UseLegacyNoteTitles}{%
+  \renewcommand{\NoteBoxHeading}[2]{##1~##2}%
+}
+
+% ---- Ordinary, unboxed proofs ----------------------------------------
+% Standard amsthm proof: natural page breaks, italic "Proof.", final square.
+% An optional heading and \qedhere remain available.
+\renewcommand{\proofname}{Proof}
+\newenvironment{myproof}[1][\proofname]
+  {\begin{proof}[#1]}
+  {\end{proof}}
+
+% ---- PDF navigation: load each package only once ----------------------
+\usepackage[dvipdfmx,unicode]{hyperref}
+\usepackage{pxjahyper}
+\usepackage{bookmark}
+\hypersetup{
+  hidelinks,
+  bookmarksnumbered=true,
+  pdfdisplaydoctitle=true
+}
+\providecommand*{\notestatementautorefname}{Statement}
+\makeatother
+\newtheorem{lemma}{Lemma}
+
+% メタデータ。本文は \begin{document} より下で編集してください。
+\newcommand{\NotesTitle}{CPP Jornal : Amplituhedron}
+\newcommand{\NotesBookAuthor}{高原 賢都}
+\newcommand{\NotesUpdated}{2026年11月05日}
+\hypersetup{pdftitle={\NotesTitle},pdfauthor={\NotesBookAuthor}}
+
+
+% Lecture-specific settings; the supplied template's layout and boxes are retained.
+\numberwithin{equation}{section}
+\renewcommand{\refname}{参考文献}
+\setcounter{tocdepth}{2}
+% Compact only the inter-section spacing in the expanded contents.
+\makeatletter
+\patchcmd{\l@section}{1.0em}{0.4em}{}{}
+\makeatother
+\hypersetup{pdfsubject={Amplituhedronの基礎}}
+
+\begin{document}
+\begin{center}
+  \vspace*{3mm}
+  {\LARGE\bfseries \NotesTitle\par}
+  \vspace{4mm}
+  {\large \NotesBookAuthor\par}
+  \vspace{5mm}
+  {\small spinor-helicity formalism から amplituhedron まで\qquad 更新日：\NotesUpdated\par}
+\end{center}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.3\textwidth]{amplituhedron-7-white-caption.png}
+    \label{fig:example}
+\end{figure}
+\hypertarget{toc}{}
+\tableofcontents
+momentum twistorとsuperamplitude の導入については\cite{DE2025} を参照した。\\
+Amplituhedronについては主に\cite{DE2025},\cite{AHT2014},\cite{AHBL2017}を参照した。
+\clearpage
+
+% ===== 01_classical.tex =====
+\section{momentum twistor}
+現代的な散乱振幅の計算ではspinor-helicity 変数 $\lambda, \tilde{\lambda}$ を用いていたが、
+Amplituhedron の計算では運動量保存を満たす粒子のデータを複素射影平面上の点の配置として表したいのでmomentum Twistor という変数を導入する。\\
+massless粒子の運動量はspinorを用いると
+\[
+p_i^{\alpha\dot\alpha}
+=
+\lambda_i^\alpha\tilde\lambda_i^{\dot\alpha}
+\]
+と表せる。ここで \(\alpha,\dot\alpha=1,2\) である。masslessなので右辺の$2\times 2$行列の行列式は$p_i^2 = 0$になるのでmassless条件はspinor-helicity変数に元から入っていると考えることができるが、粒子全体についての運動量保存則
+\[
+\sum_{i=1}^{n}
+\lambda_i^\alpha\tilde\lambda_i^{\dot\alpha}=0
+\]
+に関しては満たさなければいけない条件なので、\(\lambda_i\) と \(\tilde\lambda_i\) をすべて勝手に選ぶことはできない。\\
+そこで、最初から運動量保存則を満たすような変数でscattering のkinematicsを記述することができないかを考えていきたい。この役割を果たすために導入された自然な変数がmomentum twistor である。
+\subsection{defenition of momentum twistor}
+各粒子$i$に対して、斉次座標を用いた
+\[
+Z_i=[
+\lambda_i^1
+,\lambda_i^2
+,\mu_i^1
+\mu_i^2] \in \mathbb{C}P^3 \quad Z_i\sim t_iZ_i,
+\qquad t_i\neq0
+\]
+という$\mathbb{C}P^3$上の変数を用意する。ここで$\lambda^1,\lambda^2$はもともとあった2成分spinorの成分表示である。$\mu$は同じく2成分spinorの$\tilde{\lambda}$のようなものが変換されたものであり
+\[
+(\lambda_i,\tilde\lambda_i)
+\quad\longrightarrow\quad
+Z_i=(\lambda_i,\mu_i)
+\]
+という変換をここで行ったことになる。しかし、\(\mu_i\) は単に \(\tilde\lambda_i\) の名前を変えたものではなく、隣接するtwistor 3つを用いて\(\tilde\lambda_i\)を復元するようなものであることに注意する必要がある。
+よって、一粒子ずつの孤立した記述をしていたspinor-helicity 変数から粒子の巡回順序を利用したmomentum twistorへと変換していることがわかる。\\
+次に、双対ツイスターという概念を導入したい。例えば、通常の3次元空間では
+\[
+ax+by+cz+d=0
+\]
+という方程式で平面を表すことができるので、$[a,b,c,d]$ が平面を指定するデータとなる。同様に\(\mathbb{CP}^{3}\) では
+\[
+W_AZ^A=0
+\]
+が一つの射影平面を表す。ここで係数\(W_A\) 全体を非零な定数倍しても同じ平面となることから平面の係数も射影的になることが分かる。この変数$W \in {\mathbb{CP}^3}^*$を双対ツイスターという。\\
+双対ツイスター$\tilde{Z}_i$ の定義を$Z_{i-1},~Z_i,~Z_{i+1}$を通るような平面と定義する。
+\begin{mydef}{momentum twistor / dual twistor}
+  \emph{運動量ツイスター}とは $\mathbb{CP}^{3}$ 上の点であり、
+  その斉次座標を
+  \[
+    Z_i
+      =(Z_i^1:Z_i^2:Z_i^3:Z_i^4)
+      =(\lambda_i^1:\lambda_i^2:\mu_i^1:\mu_i^2)
+  \]
+  と書く。斉次座標なので非零の複素数 $t$ に対して
+  $Z_i$ と $tZ_i$ は同じ点を表す。
+
+  隣接する3点 $Z_{i-1},Z_i,Z_{i+1}$ が同一直線上にないとする。
+  これらを通る平面の方程式を
+  \[
+    \widetilde Z_{i,1}Z^1
+    +\widetilde Z_{i,2}Z^2
+    +\widetilde Z_{i,3}Z^3
+    +\widetilde Z_{i,4}Z^4=0
+  \]
+  と書くとき、その係数が定める双対射影空間の点
+  \[
+    \widetilde Z_i
+      =(\widetilde Z_{i,1}:
+        \widetilde Z_{i,2}:
+        \widetilde Z_{i,3}:
+        \widetilde Z_{i,4})
+      \in(\mathbb{CP}^{3})^*
+  \]
+  を \emph{双対ツイスター}と呼ぶ。
+  平面の方程式全体を非零定数倍しても同じ平面を表すため、
+  この係数も斉次座標となる。
+\end{mydef}
+この座標を用いると、ツイスターと双対ツイスターからspinor-helicityのbraketを
+\[
+\langle ij\rangle=Z_i^{T}IZ_j,
+\qquad
+[ij]=\tilde Z_i^{T}\tilde I\tilde Z_j
+\]
+によって復元できる。ここで、
+\[
+I=
+\begin{pmatrix}
+0&1&0&0\\
+-1&0&0&0\\
+0&0&0&0\\
+0&0&0&0
+\end{pmatrix},
+\qquad
+\tilde I=
+\begin{pmatrix}
+0&0&0&0\\
+0&0&0&0\\
+0&0&0&1\\
+0&0&-1&0
+\end{pmatrix}
+\]
+である。
+平面の係数である双対ツイスターをツイスターから具体的に作る公式は
+\begin{equation}
+  \tilde Z_i^A
+=
+\frac{
+\epsilon^{ABCD}
+Z_{i-1}^B Z_i^C Z_{i+1}^D
+}{
+\langle i-1\ i\rangle
+\langle i\ i+1\rangle
+}
+\end{equation}
+で与えられる。\footnote{分子はベクトル解析における外積の類似物である。}
+例えばこの分子を \(Z_i\) や\(Z_{i\pm1}\)と縮約すると反対称な$\epsilon$があるため0になることが分かる。
+\[
+\tilde Z_i^A {Z_i}^A
+=
+\frac{
+\epsilon^{ABCD}{Z_i}^A
+Z_{i-1}^B Z_i^C Z_{i+1}^D
+}{
+\langle i-1\ i\rangle
+\langle i\ i+1\rangle
+} = 0
+\]
+また、ツイスターを用いて定義できる量として4ブラケット$\langle i\ j\ k\ l\rangle$というものが知られている。
+\[
+\langle i\ j\ k\ l\rangle
+=
+\det(Z_i,Z_j,Z_k,Z_l) = \epsilon_{ABCD}Z^A_i Z^B_j Z^C_k Z^D_l
+\]
+$Z_i,Z_j,Z_k,Z_l$は$4\times 4$行列で、$\langle i\ j\rangle$ の類似物でもある。\\
+次に、ツイスターから双対ツイスターを復元することを考える。ツイスターの第1,2成分を読み取ればそのまま$\lambda_i$が得られる。もう一方の$\tilde{\lambda}_i$も実は隣接するツイスターから復元できることが分かる。
+\begin{mythm}{twistor $\to$ spinor helicity}
+  $\{Z_i\}_{i=1,\cdots n}$ を$n\geq 4$粒子に対するツイスターとして、任意の$i$に対して$\langle i\ i+1\rangle\neq 0$と$\langle i\ i+1\ i+2\ i+3\rangle\neq 0$ が成立するとする。このとき、$A=1,2$に対して
+\[
+\lambda_i^A=Z_i^A,
+\]
+
+\[
+\tilde\lambda_i^A=
+\frac{
+\langle i-1\ i\rangle Z_{i+1}^{A+2}
++\langle i+1\ i-1\rangle Z_i^{A+2}
++\langle i\ i+1\rangle Z_{i-1}^{A+2}
+}{
+\langle i-1\ i\rangle\langle i\ i+1\rangle
+}
+\]
+が成り立つ。
+\end{mythm}
+この復元公式によって確かにツイスターは運動量保存則を初めから満たしていることを確認できる。$\tilde{\lambda}_i$を分けて書くと
+\[
+\tilde\lambda_i
+=
+\frac{\mu_{i+1}}{\langle i\ i+1\rangle}
++
+\frac{\langle i+1\ i-1\rangle\mu_i}
+{\langle i-1\ i\rangle\langle i\ i+1\rangle}
++
+\frac{\mu_{i-1}}{\langle i-1\ i\rangle}.
+\]
+となり、これを運動量の総和
+\[
+\sum_i p_i^{\alpha\dot\alpha}
+=
+\sum _i\lambda_i^\alpha\tilde\lambda_i^{\dot\alpha}
+\]
+に代入すると、それの\(\mu_j^{\dot\alpha}\) の係数は
+\[
+\frac{\lambda_{j-1}^{\alpha}}
+{\langle j-1\ j\rangle}
++
+\frac{
+\langle j+1\ j-1\rangle\lambda_j^{\alpha}
+}{
+\langle j-1\ j\rangle\langle j\ j+1\rangle
+}
++
+\frac{\lambda_{j+1}^{\alpha}}
+{\langle j\ j+1\rangle}
+\]
+になることが分かる。よって、共通分母をかけると
+\[
+\langle j\ j+1\rangle\lambda_{j-1}
++
+\langle j+1\ j-1\rangle\lambda_j
++
+\langle j-1\ j\rangle\lambda_{j+1}.
+\]
+になり、これはspinor-helicity に登場したSchouten恒等式によってゼロになることがわかる。したがってすべての\(\mu_j\) の係数が消えて運動量保存則が得られた。spinor-helicityの計算では運動量保存則がないため
+さまざまな恒等式がその冗長性により登場したが、kinematicsまでを含めた運動量ツイスターを用いれば運動量保存則まで復元公式に組み込まれているため、より計算がしやすくなると考えられる。
+\subsection{warm-up calculation with momentum twistors}
+運動量ツイスターを用いた計算をすることでamplitudeに現れていたsquare braket を4braket に置き換えることができる。この章ではspinor-helicity の$[i\ i+1]$ をツイスターを通してangleのみで表すことを示す。
+\begin{mylemma}{square braket $\to$ angle braket + 4braket}
+\begin{equation}
+  [i\ i+1]
+=
+\frac{
+\langle i-1\ i\ i+1\ i+2\rangle
+}{
+\langle i-1\ i\rangle
+\langle i\ i+1\rangle
+\langle i+1\ i+2\rangle
+}
+\end{equation}
+\end{mylemma}
+\begin{myproof}
+  square braket を 双対ツイスターで表し、その双対ツイスターを変換公式でツイスターとして表してangle braket もしくは4 braket の形に整えればよい。\\
+  以下では、繰り返し現れる添字について $1,\ldots,4$ の和を取る。
+  反対称行列 $I_{AB}$ を
+  \[
+    I_{12}=1,\qquad I_{21}=-1,
+    \qquad \text{その他の成分は }0
+  \]
+  と定めると、
+  \[
+    \langle ij\rangle=I_{AB}Z_i^A Z_j^B
+  \]
+  である。また、
+  \[
+    \widetilde I^{AB}
+      =\frac12\epsilon^{ABCD}I_{CD}
+  \]
+  とおけば、square bracket は双対ツイスターを用いて
+  \[
+    [i\,i+1]
+      =\widetilde I^{AB}
+        \widetilde Z_{i,A}\widetilde Z_{i+1,B}
+  \]
+  と表せる。
+
+  双対ツイスターの変換公式
+  \[
+    \widetilde Z_{i,A}
+      =
+      \frac{
+        \epsilon_{ABCD}
+        Z_{i-1}^B Z_i^C Z_{i+1}^D
+      }{
+        \langle i-1\,i\rangle
+        \langle i\,i+1\rangle
+      }
+  \]
+  を代入する。分母を
+  \[
+    D_i:=
+      \langle i-1\,i\rangle
+      \langle i\,i+1\rangle^2
+      \langle i+1\,i+2\rangle
+  \]
+  と略記すると、
+  \[
+    [i\,i+1]
+      =
+      \frac{1}{2D_i}
+      \epsilon^{ABCD}I_{CD}
+      \epsilon_{AEFG}\epsilon_{BHJK}
+      Z_{i-1}^E Z_i^F Z_{i+1}^G
+      Z_i^H Z_{i+1}^J Z_{i+2}^K
+  \]
+  を得る。
+
+  ここで、レヴィ＝チヴィタ記号の縮約公式
+  \[
+    \begin{aligned}
+      \epsilon^{ABCD}\epsilon_{AEFG}
+      ={}&
+      \delta_E^B\delta_F^C\delta_G^D
+      +\delta_E^C\delta_F^D\delta_G^B
+      +\delta_E^D\delta_F^B\delta_G^C\\
+      &-\delta_E^B\delta_F^D\delta_G^C
+      -\delta_E^D\delta_F^C\delta_G^B
+      -\delta_E^C\delta_F^B\delta_G^D
+    \end{aligned}
+  \]
+  を用いる。
+
+  右辺の第2項と第6項では、$\epsilon_{BHJK}$ との
+  縮約によって $\epsilon_{GHJK}$ が現れる。
+  これを $Z_{i+1}^G Z_{i+1}^J$ と縮約すると、
+  $G,J$ に関する反対称性により $0$ となる。
+  同様に、第3項と第5項も、
+  $\epsilon_{FHJK}$ と $Z_i^F Z_i^H$ の縮約によって
+  $0$ となる。
+
+  残る第1項と第4項は、$I_{CD}=-I_{DC}$ により
+  同じ寄与を与える。したがって、係数 $1/2$ が消え、
+  \[
+    [i\,i+1]
+      =
+      \frac{
+        \delta_E^B\delta_F^C\delta_G^D
+        \epsilon_{BHJK}I_{CD}
+        Z_{i-1}^E Z_i^F Z_{i+1}^G
+        Z_i^H Z_{i+1}^J Z_{i+2}^K
+      }{D_i}
+  \]
+  となる。
+
+  クロネッカーのデルタによる縮約を実行し、
+  因子をまとめると、
+  \[
+    [i\,i+1]
+      =
+      \frac{
+        \bigl(
+          \epsilon_{EHJK}
+          Z_{i-1}^E Z_i^H Z_{i+1}^J Z_{i+2}^K
+        \bigr)
+        \bigl(
+          I_{FG}Z_i^F Z_{i+1}^G
+        \bigr)
+      }{D_i}.
+  \]
+  分子の二つの因子は、それぞれ
+  \[
+    \epsilon_{EHJK}
+      Z_{i-1}^E Z_i^H Z_{i+1}^J Z_{i+2}^K
+      =\langle i-1\,i\,i+1\,i+2\rangle,
+    \qquad
+    I_{FG}Z_i^F Z_{i+1}^G
+      =\langle i\,i+1\rangle
+  \]
+  である。よって、
+  \[
+    \begin{aligned}
+      [i\,i+1]
+      &=
+      \frac{
+        \langle i-1\,i\,i+1\,i+2\rangle
+        \langle i\,i+1\rangle
+      }{
+        \langle i-1\,i\rangle
+        \langle i\,i+1\rangle^2
+        \langle i+1\,i+2\rangle
+      }\\
+      &=
+      \frac{
+        \langle i-1\,i\,i+1\,i+2\rangle
+      }{
+        \langle i-1\,i\rangle
+        \langle i\,i+1\rangle
+        \langle i+1\,i+2\rangle
+      },
+    \end{aligned}
+  \]
+  となり、求める公式が得られる。
+\end{myproof}
+この公式を用いるとamplitudeの幾何学的な形が何となく見えてくる。例えば、
+\[
+(p_i+p_{i+1})^2
+=
+\langle i\ i+1\rangle[i\ i+1].
+\]
+に先ほどの公式を代入すると、
+\[
+(p_i+p_{i+1})^2
+=
+\frac{
+\langle i-1\ i\ i+1\ i+2\rangle
+}{
+\langle i-1\ i\rangle
+\langle i+1\ i+2\rangle
+}
+\]
+となる。ここで、$(p_i+p_{i+1})^2 = 0$~という条件はmomentum が直交しているという条件だったが、4 braketでは
+\[
+\langle i-1\ i\ i+1\ i+2\rangle=0
+\]
+という行列式の条件に対応して、これは4つのツイスターが共通の面を持っていることを表している。また、連続した粒子の運動量の和については
+\[
+(p_r+p_{r+1}+\cdots+p_s)^2
+=
+\frac{
+\langle r-1\ r\ s\ s+1\rangle
+}{
+\langle r-1\ r\rangle
+\langle s\ s+1\rangle
+}
+\]
+と表せる。
+\subsection{six-particle NMHV amplitude}
+\[
+A_6(1^-,2^-,3^-,4^+,5^+,6^+)
+\]
+を運動量ツイスターで計算してみる。spinor-helicity formalism を用いた計算では
+\[
+\begin{aligned}
+&A_6(1^-,2^-,3^-,4^+,5^+,6^+)\\[2pt]
+&=
+\frac{
+[4|P_{32}|1\rangle^{3}
+}{
+[23][34]\,[2|P_{34}|5\rangle
+\langle56\rangle\langle61\rangle\,s_{234}
+}
++
+\frac{
+[6|P_{54}|3\rangle^{3}
+}{
+[61][12]\,[2|P_{34}|5\rangle
+\langle34\rangle\langle45\rangle\,s_{612}
+}.
+\end{aligned}
+\]
+と表された。ここには$[23],\quad[34],\quad [2|P_{34}|5\rangle,\quad s_{234}$ などが混在している。ここで
+\[
+[a|P_{bc}|d\rangle
+=
+[ab]\langle bd\rangle+[ac]\langle cd\rangle
+\]
+である。例えば、以下などが成立する。
+\begin{mythm}{famous formula}
+  \[
+[2|P_{34}|5\rangle
+=
+\frac{\langle1235\rangle}
+{\langle12\rangle\langle23\rangle}
+\]
+\end{mythm}
+\begin{myproof}
+  以下では、斉次座標の代表元を
+  \[
+    Z_i=
+    \begin{pmatrix}
+      \lambda_i\\
+      \mu_i
+    \end{pmatrix}
+  \]
+  と書き、$\lambda_i,\widetilde\lambda_i,\mu_i$ を
+  2成分の列ベクトルとして扱う。
+
+  まず、square bracket の定義から、
+  \[
+    \begin{aligned}
+      [2|P_{34}|5\rangle
+      &=[23]\langle35\rangle+[24]\langle45\rangle\\
+      &=\det\!\left(
+        \widetilde\lambda_2,\,
+        \langle35\rangle\widetilde\lambda_3
+        +\langle45\rangle\widetilde\lambda_4
+      \right)
+    \end{aligned}
+  \]
+  である。
+
+  スピノルの復元公式を用いると、第1列は
+  \[
+    \begin{aligned}
+      \widetilde\lambda_2
+      &=
+      \frac{
+        \langle12\rangle\mu_3
+        +\langle31\rangle\mu_2
+        +\langle23\rangle\mu_1
+      }{
+        \langle12\rangle\langle23\rangle
+      }\\
+      &=
+      \frac{1}{\langle12\rangle}
+      \left(
+        \mu_1+
+        \frac{
+          \langle31\rangle\mu_2+\langle12\rangle\mu_3
+        }{\langle23\rangle}
+      \right)
+    \end{aligned}
+  \]
+  と書ける。一方、第2列については、
+  \[
+    \begin{aligned}
+      &\langle35\rangle\widetilde\lambda_3
+        +\langle45\rangle\widetilde\lambda_4\\
+      &=
+      \langle35\rangle
+      \frac{
+        \langle23\rangle\mu_4
+        +\langle42\rangle\mu_3
+        +\langle34\rangle\mu_2
+      }{
+        \langle23\rangle\langle34\rangle
+      }
+      +
+      \langle45\rangle
+      \frac{
+        \langle34\rangle\mu_5
+        +\langle53\rangle\mu_4
+        +\langle45\rangle\mu_3
+      }{
+        \langle34\rangle\langle45\rangle
+      }\\
+      &=
+      \mu_5
+      +\frac{\langle35\rangle+\langle53\rangle}
+             {\langle34\rangle}\mu_4
+      +\frac{
+        \langle35\rangle\langle42\rangle
+        +\langle45\rangle\langle23\rangle
+      }{
+        \langle23\rangle\langle34\rangle
+      }\mu_3
+      +\frac{\langle35\rangle}{\langle23\rangle}\mu_2\\
+      &=
+      \mu_5+
+      \frac{
+        \langle35\rangle\mu_2-\langle25\rangle\mu_3
+      }{\langle23\rangle}
+    \end{aligned}
+  \]
+  となる。最後の等号では、反対称性と
+  スハウテン恒等式
+  \[
+    \langle35\rangle+\langle53\rangle=0,
+    \qquad
+    \langle35\rangle\langle42\rangle
+    +\langle45\rangle\langle23\rangle
+    =-\langle25\rangle\langle34\rangle
+  \]
+  を用いた。
+
+  ここで、
+  \[
+    \widehat\mu_1
+      :=
+      \mu_1+
+      \frac{
+        \langle31\rangle\mu_2+\langle12\rangle\mu_3
+      }{\langle23\rangle},
+    \qquad
+    \widehat\mu_5
+      :=
+      \mu_5+
+      \frac{
+        \langle35\rangle\mu_2-\langle25\rangle\mu_3
+      }{\langle23\rangle}
+  \]
+  とおけば、
+  \[
+    [2|P_{34}|5\rangle
+      =
+      \frac{1}{\langle12\rangle}
+      \det(\widehat\mu_1,\widehat\mu_5)
+  \]
+  を得る。
+
+  次に、この行列式を4ブラケットで表す。
+  スハウテン恒等式より、
+  \[
+    \lambda_1
+    +\frac{\langle31\rangle}{\langle23\rangle}\lambda_2
+    +\frac{\langle12\rangle}{\langle23\rangle}\lambda_3
+    =0,
+  \]
+  \[
+    \lambda_5
+    +\frac{\langle35\rangle}{\langle23\rangle}\lambda_2
+    -\frac{\langle25\rangle}{\langle23\rangle}\lambda_3
+    =0
+  \]
+  が成り立つ。したがって、
+  \[
+    \begin{aligned}
+      \widehat Z_1
+      &:=
+      Z_1+
+      \frac{\langle31\rangle}{\langle23\rangle}Z_2+
+      \frac{\langle12\rangle}{\langle23\rangle}Z_3
+      =
+      \begin{pmatrix}
+        0\\
+        \widehat\mu_1
+      \end{pmatrix},\\
+      \widehat Z_5
+      &:=
+      Z_5+
+      \frac{\langle35\rangle}{\langle23\rangle}Z_2-
+      \frac{\langle25\rangle}{\langle23\rangle}Z_3
+      =
+      \begin{pmatrix}
+        0\\
+        \widehat\mu_5
+      \end{pmatrix}.
+    \end{aligned}
+  \]
+  ここで、$0$ は2成分の零ベクトルである。
+
+  行列式の列基本変形により、
+  \[
+    \begin{aligned}
+      \langle1235\rangle
+      &=\det(Z_1,Z_2,Z_3,Z_5)\\
+      &=\det(\widehat Z_1,Z_2,Z_3,\widehat Z_5)\\
+      &=\det(Z_2,Z_3,\widehat Z_1,\widehat Z_5)\\
+      &=
+      \det
+      \begin{pmatrix}
+        \lambda_2&\lambda_3&0&0\\
+        \mu_2&\mu_3&\widehat\mu_1&\widehat\mu_5
+      \end{pmatrix}\\
+      &=\det(\lambda_2,\lambda_3)\,
+        \det(\widehat\mu_1,\widehat\mu_5)\\
+      &=\langle23\rangle
+        \det(\widehat\mu_1,\widehat\mu_5).
+    \end{aligned}
+  \]
+  第3行では列の交換を2回行っているため、符号は変わらない。
+  また、第4行は $4\times4$ 行列のブロック表示であり、
+  右上の $2\times2$ ブロックが零行列なので、
+  行列式が対角ブロックの行列式の積になる。
+
+  以上より、
+  \[
+    [2|P_{34}|5\rangle
+      =
+      \frac{1}{\langle12\rangle}
+      \det(\widehat\mu_1,\widehat\mu_5)
+      =
+      \frac{\langle1235\rangle}
+           {\langle12\rangle\langle23\rangle}.
+  \]
+\end{myproof}
+また、前章で示した運動量の和の二乗に関する式を用いれば
+\[
+s_{234}
+=
+\frac{\langle1245\rangle}
+{\langle12\rangle\langle45\rangle},
+\qquad
+s_{612}
+=
+\frac{\langle2356\rangle}
+{\langle23\rangle\langle56\rangle}.
+\]
+が成り立つ。これらをNMHM amplitude に代入することで以下のような表式が得られる。
+\begin{mythm}{NMHM amplitude}
+\begin{equation}
+  \begin{aligned}
+A_6(1^-,2^-,3^-,4^+,5^+,6^+)
+&=
+\frac{
+\langle12\rangle^4\langle23\rangle^4
+}{
+\langle12\rangle\langle23\rangle
+\langle34\rangle\langle45\rangle
+\langle56\rangle\langle61\rangle
+}\\
+&\times
+\frac{1}{\langle1235\rangle}
+\left(
+\frac{
+\langle1356\rangle^3
+}{
+\langle2356\rangle
+\langle1236\rangle
+\langle1256\rangle
+}
++
+\frac{
+\langle1345\rangle^3
+}{
+\langle1234\rangle
+\langle1245\rangle
+\langle2345\rangle
+}
+\right)
+  \end{aligned}
+\end{equation}
+\end{mythm}
+\begin{myproof}
+  式 (39) より、
+  \[
+    A_6(1^-,2^-,3^-,4^+,5^+,6^+)
+      =T_{234}+T_{612},
+  \]
+  ただし、
+  \[
+    T_{234}
+      :=
+      \frac{
+        [4|P_{32}|1\rangle^3
+      }{
+        [23][34][2|P_{34}|5\rangle
+        \langle56\rangle\langle61\rangle s_{234}
+      },
+  \]
+  \[
+    T_{612}
+      :=
+      \frac{
+        [6|P_{54}|3\rangle^3
+      }{
+        [61][12][2|P_{34}|5\rangle
+        \langle34\rangle\langle45\rangle s_{612}
+      }
+  \]
+  である。以下、それぞれの項を運動量ツイスターで表す。
+
+  まず、隣接する square bracket の変換公式から、
+  \[
+    \begin{aligned}
+      [23]
+      &=
+      \frac{\langle1234\rangle}{
+        \langle12\rangle\langle23\rangle\langle34\rangle
+      },
+      &
+      [34]
+      &=
+      \frac{\langle2345\rangle}{
+        \langle23\rangle\langle34\rangle\langle45\rangle
+      },\\
+      [61]
+      &=
+      \frac{\langle1256\rangle}{
+        \langle56\rangle\langle61\rangle\langle12\rangle
+      },
+      &
+      [12]
+      &=
+      -\frac{\langle1236\rangle}{
+        \langle61\rangle\langle12\rangle\langle23\rangle
+      }.
+    \end{aligned}
+  \]
+  ここで、4ブラケットの反対称性
+  \[
+    \langle5612\rangle=\langle1256\rangle,
+    \qquad
+    \langle6123\rangle=-\langle1236\rangle
+  \]
+  を用いた。
+
+  また、混合ブラケットと運動量不変量の変換公式は、
+  \[
+    \begin{aligned}
+      [4|P_{32}|1\rangle
+      &=
+      \frac{\langle1345\rangle}{
+        \langle34\rangle\langle45\rangle
+      },\\
+      [6|P_{54}|3\rangle
+      &=
+      -\frac{\langle1356\rangle}{
+        \langle56\rangle\langle61\rangle
+      },\\
+      [2|P_{34}|5\rangle
+      &=
+      \frac{\langle1235\rangle}{
+        \langle12\rangle\langle23\rangle
+      },
+    \end{aligned}
+  \]
+  \[
+    s_{234}
+      =
+      \frac{\langle1245\rangle}{
+        \langle12\rangle\langle45\rangle
+      },
+    \qquad
+    s_{612}
+      =
+      \frac{\langle2356\rangle}{
+        \langle23\rangle\langle56\rangle
+      }
+  \]
+  である。なお、運動量保存より
+  \[
+    [6|P_{54}|3\rangle
+      =-[6|P_{12}|3\rangle
+  \]
+  となるため、上の第2式には負号が付く。
+
+  共通因子を
+  \[
+    C_6:=
+    \frac{
+      \langle12\rangle^4\langle23\rangle^4
+    }{
+      \langle12\rangle\langle23\rangle
+      \langle34\rangle\langle45\rangle
+      \langle56\rangle\langle61\rangle
+    }
+  \]
+  とおく。以上の公式を $T_{234}$ に代入すると、
+  \[
+    \begin{aligned}
+      T_{234}
+      &=
+      \left(
+        \frac{\langle1345\rangle}{
+          \langle34\rangle\langle45\rangle
+        }
+      \right)^3
+      \frac{
+        \langle12\rangle\langle23\rangle\langle34\rangle
+      }{\langle1234\rangle}
+      \frac{
+        \langle23\rangle\langle34\rangle\langle45\rangle
+      }{\langle2345\rangle}\\
+      &\quad\times
+      \frac{\langle12\rangle\langle23\rangle}
+           {\langle1235\rangle}
+      \frac{1}{\langle56\rangle\langle61\rangle}
+      \frac{\langle12\rangle\langle45\rangle}
+           {\langle1245\rangle}\\
+      &=
+      \frac{C_6}{\langle1235\rangle}
+      \frac{\langle1345\rangle^3}{
+        \langle1234\rangle
+        \langle1245\rangle
+        \langle2345\rangle
+      }.
+    \end{aligned}
+  \]
+
+  同様に、$T_{612}$ は
+  \[
+    \begin{aligned}
+      T_{612}
+      &=
+      \left(
+        -\frac{\langle1356\rangle}{
+          \langle56\rangle\langle61\rangle
+        }
+      \right)^3
+      \frac{
+        \langle56\rangle\langle61\rangle\langle12\rangle
+      }{\langle1256\rangle}
+      \left(
+        -\frac{
+          \langle61\rangle\langle12\rangle\langle23\rangle
+        }{\langle1236\rangle}
+      \right)\\
+      &\quad\times
+      \frac{\langle12\rangle\langle23\rangle}
+           {\langle1235\rangle}
+      \frac{1}{\langle34\rangle\langle45\rangle}
+      \frac{\langle23\rangle\langle56\rangle}
+           {\langle2356\rangle}\\
+      &=
+      \frac{C_6}{\langle1235\rangle}
+      \frac{\langle1356\rangle^3}{
+        \langle2356\rangle
+        \langle1236\rangle
+        \langle1256\rangle
+      }.
+    \end{aligned}
+  \]
+  この計算では、分子の3乗から生じる負号と、
+  $[12]$ の逆数から生じる負号が打ち消し合う。
+
+  したがって、二つの項を足し合わせると、
+  \[
+    \begin{aligned}
+      &A_6(1^-,2^-,3^-,4^+,5^+,6^+)\\
+      &=
+      \frac{C_6}{\langle1235\rangle}
+      \left(
+        \frac{\langle1356\rangle^3}{
+          \langle2356\rangle
+          \langle1236\rangle
+          \langle1256\rangle
+        }
+        +
+        \frac{\langle1345\rangle^3}{
+          \langle1234\rangle
+          \langle1245\rangle
+          \langle2345\rangle
+        }
+      \right).
+    \end{aligned}
+  \]
+  $C_6$ の定義を戻せば、主張の式が得られる。
+\end{myproof}
+\section{Supervariables and Superamplitudes}
+前章では\(A_6(1^-,2^-,3^-,4^+,5^+,6^+)\)をhelicityごとに個別に計算したが、この章ではそれらの母関数となる
+superamplitudeを導入する。
+\subsection{Grassmann variables}
+Grassmann変数は
+\[
+\theta_a\theta_b=-\theta_b\theta_a
+\]
+のような反交換関係を満たすため、$\theta^2= 0$となり、一つのGrassmann変数についての多項式は
+\[
+F(\theta)=a+b\theta
+\]
+となる。二つの変数の場合は
+\[
+F(\theta_1,\theta_2)
+=
+a+b\theta_1+c\theta_2+d\theta_1\theta_2
+\]
+となる。このような性質によって、グラスマン変数の多項式の各項はそのグラスマン変数が含まれているか含まれていないかで区別することができる。\\
+各粒子$i$に4つのグラスマン変数
+\[
+\eta_i^1,\eta_i^2,\eta_i^3,\eta_i^4
+\]
+を割り当てることを考える。そして、その積を
+\[
+\bar\eta_i
+:=
+\eta_i^1\eta_i^2\eta_i^3\eta_i^4
+\]
+と表す。この割り当てを使ってグルーオンのamplitudeを考えてみる。\\
+粒子$i$のヘリシティ$+1$に対応する因子を$1$、ヘリシティ$-1$に対応する因子をその粒子のグラスマン変数の総積$\bar\eta_i$とすると、
+例えば$A_6(1^-,2^-,3^-,4^+,5^+,6^+)$はsuperamplitudeのなかで$\bar\eta_1\bar\eta_2\bar\eta_3$
+に対応する係数として現れてほしい。つまり、superamplitudeをグラスマン変数で展開したときの
+\[
+\mathcal A_6
+=
+\cdots+
+A_6(1^-,2^-,3^-,4^+,5^+,6^+)
+\bar\eta_1\bar\eta_2\bar\eta_3
++\cdots
+\]
+という項を取り出せれば求めるhelicity amplitude が分かる。この取り出し方について少し考えてみる。\\
+グラスマン変数の積分を
+\[
+\int d\theta=0,
+\qquad
+\int\theta\,d\theta=1
+\]
+で定義する。これによって、一変数グラスマン多項式$F(\theta)=a+b\theta$の係数$b$は
+\[
+\int(a+b\theta)\,d\theta=b
+\]
+によって積分で取り出せる。同様に、定数項$a$を取り出したければ、$b$項を消すために$\theta$をかけて積分した
+\[
+\int\theta(a+b\theta)\,d\theta
+=
+\int a\theta\,d\theta
+=
+a
+\]
+をすればよいことが分かる。これと同じ仕組みをsuperamplitude で考える。\\
+helicity が$-1$の粒子の因子には$\bar{\eta}$があり、今回取り出したいhelicity amplitude はその係数部分なので、取り出したい項のグラスマン因子が全ての粒子に対するグラスマン因子$\bar{\eta}_i$の総積
+となるようにsuperamplitudeに因子をかけてから積分する。例えば、負ヘリシティ粒子が\(i,j,k\) の場合には
+\begin{equation}
+  A_{ijk}^{(n)}
+=
+\int
+\left(
+\prod_{\ell\neq i,j,k}\bar\eta_\ell
+\right)
+\mathcal A_n^{\mathrm{NMHV}}\,d\bar\eta
+\end{equation}
+となる。
+\subsection{momoentum supertwistor}
+ここでまでの$\eta_i$はspinor-helicity 変数側のグラスマン変数であった。これを運動量ツイスター側に導入するために
+\[
+\chi_i^1,\chi_i^2,\chi_i^3,\chi_i^4
+\]
+というグラスマン変数を導入する。この対応関係は前章で行った運動量ツイスターへの変換
+\[
+(\lambda_i,\tilde\lambda_i)
+\quad\longleftrightarrow\quad
+Z_i=(\lambda_i,\mu_i)
+\]
+を拡張した
+\[
+(\lambda_i,\tilde\lambda_i,\eta_i)
+\quad\longleftrightarrow\quad
+(Z_i,\chi_i)
+\]
+である。この組$\mathcal Z_i=(Z_i,\chi_i)$ を運動量超ツイスター(momoentum supertwistor)とよび、これも同様に斉次座標を用いて
+\[
+\mathcal Z_i
+=
+(Z_i^1:Z_i^2:Z_i^3:Z_i^4:
+\chi_i^1:\chi_i^2:\chi_i^3:\chi_i^4)
+\in\mathbb{CP}^{3|4}
+\]
+と表せる。ここで\(\mathbb{CP}^{3|4}\) は可換な座標と反交換する座標を併せ持つ射影超空間とした。これは\(\mathbb{CP}^{7}\)を最初の4つの斉次座標と
+最後の4つの斉次座標とを別々に扱うことで正当化できる。前章と同様に、\(\chi\) から \(\eta\) への変換公式を与えることができる。
+\begin{mythm}{transformation}
+  $A=1,2,3,4$に対して\(\chi\) から \(\eta\) への変換公式は
+  \[
+\eta_i^A
+=
+\frac{
+\langle i-1\ i\rangle\chi_{i+1}^A
++\langle i+1\ i-1\rangle\chi_i^A
++\langle i\ i+1\rangle\chi_{i-1}^A
+}{
+\langle i-1\ i\rangle\langle i\ i+1\rangle
+}
+\]
+と表せる。
+\end{mythm}
+これは前章の変換公式
+\[
+\tilde\lambda_i
+=
+\frac{
+\langle i-1\ i\rangle\mu_{i+1}
++\langle i+1\ i-1\rangle\mu_i
++\langle i\ i+1\rangle\mu_{i-1}
+}{
+\langle i-1\ i\rangle\langle i\ i+1\rangle
+}
+\]
+と全く同じ形をしていることが分かる。前章ではこの形によって運動量保存が成り立ったので、同じ理由でsupertwistorでももう一つの運動量保存則
+\[
+\sum_i\lambda_i^\alpha\eta_i^A=0
+\]
+が成立する。これを超運動量保存則(supermomentum conservation)という。ここで、
+\[
+q^{\alpha A}:=\sum_i\lambda_i^\alpha\eta_i^A
+\]
+と書けば保存則は \(q^{\alpha A}=0\) である。\(\alpha=1,2\)、\(A=1,\ldots,4\) なので、\(q\) は全部で8個のグラスマン成分を持つことが分かる。\\
+次に、グラスマン変数のデルタ関数を考える。通常のデルタ関数$\delta(x)$の定義(?)は
+\[
+\int \delta(x) f(x) \,dx = f(0)
+\]
+である。これをグラスマン変数の場合に拡張すると、
+\[
+\int\delta(\theta)(a+b\theta)\,d\theta = F(0) = a
+\]
+であるので、$\delta(\theta) = \theta$ となる。次にこれを先ほど定義した超運動量に対して考える。8成分の超運動量$q$のデルタ関数を
+\[
+\delta^{(8)}(q)
+=
+\prod_{A=1}^{4}q^{1A}q^{2A}
+\]
+で定義する。各$A$について、$\eta$の反可換性から
+\[
+\begin{aligned}
+q^{1A}q^{2A}
+&=
+\sum_{r,s}
+\lambda_r^1\lambda_s^2
+\eta_r^A\eta_s^A\\
+&=
+\sum_{r<s}
+\left(
+\lambda_r^1\lambda_s^2
+-\lambda_s^1\lambda_r^2
+\right)
+\eta_r^A\eta_s^A\\
+&=
+\sum_{r<s}
+\langle rs\rangle\eta_r^A\eta_s^A
+\end{aligned}
+\]
+が成立するので、
+\begin{equation}
+\delta^{(8)}(q)
+=
+\prod_{A=1}^{4}
+\left(
+\sum_{r<s}
+\langle rs\rangle\eta_r^A\eta_s^A
+\right)
+\end{equation}
+となる。
+\subsection{superamplitude}
+\begin{mydef}{MHV superamplitude}
+$n$-particle MHV superamplitude をsupermomentum conservation を用いた表式で
+\begin{equation}
+  \mathcal A_n^{\mathrm{MHV}}
+=
+\frac{\delta^{(8)}(q)}
+{\langle12\rangle\langle23\rangle\cdots\langle n1\rangle}
+\end{equation}
+と定義する。
+\end{mydef}
+これがすべてのMHV gluon amplitude を含んでいるのか確認する。粒子$i,j$が負ヘリシティの場合には分子から
+\[
+\bar\eta_i\bar\eta_j
+=
+\prod_{A=1}^{4}\eta_i^A
+\prod_{A=1}^{4}\eta_j^A
+\]
+の係数を取り出すと、係数は$\langle ij\rangle^4$となる。これもグラスマン変数の積分で書くと、
+\[
+\left.
+\delta^{(8)}(q)
+\right|_{\bar\eta_i\bar\eta_j\text{ の係数}}
+=
+\int
+\left(
+\prod_{\ell\neq i,j}\bar\eta_\ell
+\right)
+\delta^{(8)}(q)\,d\bar\eta
+=
+\langle ij\rangle^{4}
+\]
+となるため、最終的にhelicity MHV amplitudeは
+\[
+\begin{aligned}
+A(1^+,\ldots,i^-,\ldots,j^-,\ldots,n^+)
+&=
+\left.
+\mathcal A_n^{\mathrm{MHV}}
+\right|_{\bar\eta_i\bar\eta_j\text{ の係数}}\\
+&=
+\int
+\left(
+\prod_{\ell\neq i,j}\bar\eta_\ell
+\right)
+\mathcal A_n^{\mathrm{MHV}}\,d\bar\eta\\
+&=
+\frac{\langle ij\rangle^4}
+{\langle12\rangle\langle23\rangle\cdots\langle n1\rangle}.
+\end{aligned}
+\]
+となる。これはParke-Taylor公式そのものである。\\
+次にNMHV superamplitude を考える。MHV superamplitude の負ヘリシティ粒子数は2だったため、グラスマン次数は8であったが
+NMHV superamplitude の場合は負ヘリシティ粒子数が3のため、グラスマン次数は12となる。そのため、NMHV superamplitude を
+\[
+\mathcal A_n^{\mathrm{NMHV}}
+=
+\mathcal A_n^{\mathrm{MHV}}\,
+\mathcal P_n^{\mathrm{NMHV}}
+\]
+と表す場合、追加する因子\(\mathcal P_n^{\mathrm{NMHV}}\) は次数4になる。ここで、5 braket \([abcde]\)を導入する。\newpage
+\begin{mydef}{5braket}
+  4braket とsupertwistor のグラスマン成分を用いて
+\[
+\begin{aligned}
+\Theta_{abcde}^A
+:={}
+\langle abcd\rangle\chi_e^A
++\langle bcde\rangle\chi_a^A
+&+\langle cdea\rangle\chi_b^A
++\langle deab\rangle\chi_c^A
++\langle eabc\rangle\chi_d^A
+\end{aligned}
+\]
+と定義するとき、5 braket は
+\[
+[abcde]
+=
+\frac{
+\displaystyle\prod_{A=1}^{4}\Theta_{abcde}^A
+}{
+\langle abcd\rangle
+\langle bcde\rangle
+\langle cdea\rangle
+\langle deab\rangle
+\langle eabc\rangle
+}
+\]
+と定義される。
+\end{mydef}
+ここで各 \(\Theta^A\) は \(\chi\) について一次なので5braketのグラスマン次数は4である。\\
+また、この式はsupertwistorの射影スケールとも整合していることが分かる。
+\((Z_a,\chi_a)\) を \(t_a\) 倍すると、各 \(\Theta^A\) は \(t_a\) 倍されるので、分子は \(t_a^4\) 倍されるが、
+分母ではラベル \(a\) が五つの4ブラケットのうち四つに現れるため、同じく \(t_a^4\) 倍され、両者が打ち消し合い、5braket 自体は変わらない。
+例えば6粒子の場合、以下のような公式が知られている。
+\begin{equation}
+\mathcal A_6^{\mathrm{NMHV}}
+=
+\mathcal A_6^{\mathrm{MHV}}
+\bigl(
+[61234]+[61245]+[62345]
+\bigr)
+\end{equation}
+たしかにこれは全体で次数12を満たしている。この6-particle NMHV superamplitude を用いてhelicity NMHV amplitude、特に
+$A_6(1^-,2^-,3^-,4^+,5^+,6^+)$を計算する。
+\begin{mythm}{6-particle helicity NMHV amplitude}
+\begin{equation}
+  \begin{aligned}
+    A_{123}^{(6)}
+&=
+\int
+\left(
+\prod_{\ell\neq 1,2,3}\bar\eta_\ell
+\right)
+\frac{\delta^{(8)}(q)}{
+\langle12\rangle\langle23\rangle
+\langle34\rangle\langle45\rangle
+\langle56\rangle\langle61\rangle
+}\,
+\bigl(
+[61234]+[61245]+[62345]
+\bigr)\,
+d\bar\eta\\
+  &=\frac{
+\langle12\rangle^4\langle23\rangle^4
+}{
+\langle12\rangle\langle23\rangle
+\langle34\rangle\langle45\rangle
+\langle56\rangle\langle61\rangle
+}\times
+\frac{1}{\langle1235\rangle}
+\left(
+\frac{
+\langle1356\rangle^3
+}{
+\langle2356\rangle
+\langle1236\rangle
+\langle1256\rangle
+}
++
+\frac{
+\langle1345\rangle^3
+}{
+\langle1234\rangle
+\langle1245\rangle
+\langle2345\rangle
+}
+\right)
+  \end{aligned}
+\end{equation}
+\end{mythm}
+\begin{myproof}
+  分母とNMHV比関数を、それぞれ
+  \[
+    D_6:=
+      \langle12\rangle\langle23\rangle
+      \langle34\rangle\langle45\rangle
+      \langle56\rangle\langle61\rangle,
+    \qquad
+    \mathcal P_6:=[61234]+[61245]+[62345]
+  \]
+  とおく。以下、計算中に現れる分母は非零とする。
+  得られる等式は、有理関数の恒等式として成立する。
+
+  まず、5ブラケットの六項恒等式
+  \[
+    [12345]-[12346]+[12356]
+    -[12456]+[13456]-[23456]=0
+  \]
+  を用いる。この恒等式は、5ブラケットの定義と
+  4ブラケットのPl\"ucker関係から従う。
+  5ブラケットの巡回対称性と合わせると、
+  \[
+    \begin{aligned}
+      \mathcal P_6
+      &=[12346]+[12456]+[23456]\\
+      &=[12345]+[12356]+[13456]
+    \end{aligned}
+  \]
+  と書き換えられる。
+
+  求める振幅は
+  \[
+    A_{123}^{(6)}
+      =
+      \frac{1}{D_6}
+      \int
+      \bar\eta_4\bar\eta_5\bar\eta_6\,
+      \delta^{(8)}(q)\mathcal P_6\,d\bar\eta
+  \]
+  である。$\bar\eta_4\bar\eta_5\bar\eta_6$ を掛けた
+  グラスマン積分は、$\eta_4,\eta_5,\eta_6$ を含まない
+  成分を取り出す操作なので、以後
+  \[
+    \eta_4^A=\eta_5^A=\eta_6^A=0
+    \qquad (A=1,\ldots,4)
+  \]
+  としてよい。
+
+  このとき、超運動量保存則 $q=0$ は
+  \[
+    \lambda_1\eta_1^A
+    +\lambda_2\eta_2^A
+    +\lambda_3\eta_3^A=0
+  \]
+  となる。これを $\eta_1^A,\eta_2^A$ について解くと、
+  \[
+    \eta_1^A
+      =\frac{\langle23\rangle}{\langle12\rangle}\eta_3^A,
+    \qquad
+    \eta_2^A
+      =-\frac{\langle13\rangle}{\langle12\rangle}\eta_3^A
+  \]
+  を得る。以後、この代入と
+  $\eta_4=\eta_5=\eta_6=0$ をまとめて
+  $\left.\vphantom{A}\right|_*$ と書く。
+
+  $\delta^{(8)}(q)$ を用いて
+  $\eta_1,\eta_2$ の8成分を積分すると、
+  各 $A$ について $\langle12\rangle$ が生じるため、
+  \[
+    A_{123}^{(6)}
+      =
+      \frac{\langle12\rangle^4}{D_6}
+      \operatorname{Coeff}_{\bar\eta_3}
+      \left(\left.\mathcal P_6\right|_*\right)
+  \]
+  となる。したがって、残る計算は
+  $\left.\mathcal P_6\right|_*$ の
+  $\bar\eta_3=\eta_3^1\eta_3^2\eta_3^3\eta_3^4$
+  の係数を求めることである。
+
+  この係数を計算するため、$\chi$ の表示を選ぶ。
+  変換
+  \[
+    \chi_r^A\longmapsto
+    \chi_r^A+\vartheta_\alpha^A\lambda_r^\alpha
+  \]
+  は、$\chi$ から復元される $\eta$ を変えない。
+  これは、復元公式の分子に現れる変化が
+  スハウテン恒等式によって消えるためである。
+
+  また、5ブラケットの分子に現れる線形結合を
+  \[
+    \begin{aligned}
+      \Theta_{abcde}^A
+      :={}&
+      \langle abcd\rangle\chi_e^A
+      +\langle bcde\rangle\chi_a^A
+      +\langle cdea\rangle\chi_b^A\\
+      &+\langle deab\rangle\chi_c^A
+      +\langle eabc\rangle\chi_d^A
+    \end{aligned}
+  \]
+  とおくと、上の変換による変化も
+  \[
+    \begin{aligned}
+      &\langle abcd\rangle\lambda_e
+      +\langle bcde\rangle\lambda_a
+      +\langle cdea\rangle\lambda_b\\
+      &\qquad
+      +\langle deab\rangle\lambda_c
+      +\langle eabc\rangle\lambda_d=0
+    \end{aligned}
+  \]
+  により消える。この恒等式は、5本の4成分ベクトルの
+  余因子による線形従属関係の上の2成分である。
+  したがって、5ブラケットもこの変換で不変である。
+
+  $\langle12\rangle\neq0$ なので、この自由度を用いて
+  \[
+    \chi_1^A=\chi_2^A=0
+  \]
+  と選べる。この表示で復元公式
+  \[
+    \eta_r^A
+      =
+      \frac{
+        \langle r-1\,r\rangle\chi_{r+1}^A
+        +\langle r+1\,r-1\rangle\chi_r^A
+        +\langle r\,r+1\rangle\chi_{r-1}^A
+      }{
+        \langle r-1\,r\rangle\langle r\,r+1\rangle
+      }
+  \]
+  を順に解く。
+
+  まず、$r=2$ の式から
+  \[
+    \chi_3^A
+      =\langle23\rangle\eta_2^A
+      =-\frac{
+        \langle13\rangle\langle23\rangle
+      }{\langle12\rangle}\eta_3^A
+  \]
+  となる。次に $r=3$ の式、続いて
+  $\eta_4=\eta_5=0$ を用いると、
+  \[
+    \left.\chi_r^A\right|_*
+      =
+      -\frac{
+        \langle1r\rangle\langle23\rangle
+      }{\langle12\rangle}\eta_3^A,
+    \qquad r=3,4,5,6
+  \]
+  が得られる。
+
+  これを5ブラケットの分子に代入する。
+  まず、$\chi_1=\chi_2=0$ より、
+  \[
+    \begin{aligned}
+      \left.\Theta_{12345}^A\right|_*
+      &=
+      \left.
+      \left(
+        \langle1234\rangle\chi_5^A
+        +\langle4512\rangle\chi_3^A
+        +\langle5123\rangle\chi_4^A
+      \right)\right|_*\\
+      &=
+      -\frac{\langle23\rangle}{\langle12\rangle}
+      \left(
+        \langle1234\rangle\langle15\rangle
+        +\langle4512\rangle\langle13\rangle
+        +\langle5123\rangle\langle14\rangle
+      \right)\eta_3^A\\
+      &=
+      -\langle23\rangle\langle1345\rangle\eta_3^A.
+    \end{aligned}
+  \]
+  最後の等号では、上記の余因子による恒等式から従う
+  \[
+    \langle1234\rangle\langle15\rangle
+    +\langle4512\rangle\langle13\rangle
+    +\langle5123\rangle\langle14\rangle
+      =
+      \langle12\rangle\langle1345\rangle
+  \]
+  を用いた。同様に、
+  \[
+    \left.\Theta_{12356}^A\right|_*
+      =
+      -\langle23\rangle\langle1356\rangle\eta_3^A
+  \]
+  を得る。
+
+  一方、ラベル集合 $\{1,3,4,5,6\}$ 上では
+  $\left.\chi_r^A\right|_*$ が
+  $\langle1r\rangle$ に比例している。
+  したがって、同じ余因子による恒等式から
+  \[
+    \left.\Theta_{13456}^A\right|_*=0,
+    \qquad
+    \left.[13456]\right|_*=0
+  \]
+  となる。
+
+  以上より、5ブラケットの定義と
+  4ブラケットの反対称性を用いて、
+  \[
+    \begin{aligned}
+      \left.[12345]\right|_*
+      &=
+      \frac{
+        \langle23\rangle^4\langle1345\rangle^4
+      }{
+        \langle1234\rangle\langle2345\rangle
+        \langle3451\rangle\langle4512\rangle
+        \langle5123\rangle
+      }\bar\eta_3\\
+      &=
+      \frac{
+        \langle23\rangle^4\langle1345\rangle^3
+      }{
+        \langle1234\rangle\langle1245\rangle
+        \langle1235\rangle\langle2345\rangle
+      }\bar\eta_3,
+    \end{aligned}
+  \]
+  \[
+    \begin{aligned}
+      \left.[12356]\right|_*
+      &=
+      \frac{
+        \langle23\rangle^4\langle1356\rangle^4
+      }{
+        \langle1235\rangle\langle2356\rangle
+        \langle3561\rangle\langle5612\rangle
+        \langle6123\rangle
+      }\bar\eta_3\\
+      &=
+      \frac{
+        \langle23\rangle^4\langle1356\rangle^3
+      }{
+        \langle1235\rangle\langle2356\rangle
+        \langle1256\rangle\langle1236\rangle
+      }\bar\eta_3
+    \end{aligned}
+  \]
+  となる。
+
+  したがって、
+  \[
+    \begin{aligned}
+      \operatorname{Coeff}_{\bar\eta_3} 
+        \left(\left.\mathcal P_6\right|_*\right)=
+      \frac{\langle23\rangle^4}{\langle1235\rangle}
+      \left(
+        \frac{\langle1356\rangle^3}{
+          \langle2356\rangle
+          \langle1236\rangle
+          \langle1256\rangle
+        }
+        +
+        \frac{\langle1345\rangle^3}{
+          \langle1234\rangle
+          \langle1245\rangle
+          \langle2345\rangle
+        }
+      \right).
+    \end{aligned}
+  \]
+  これに $\langle12\rangle^4/D_6$ を掛けると、
+  \[
+    \begin{aligned}
+      A_{123}^{(6)}
+      =
+      \frac{
+        \langle12\rangle^4\langle23\rangle^4
+      }{
+        D_6\langle1235\rangle
+      }
+      \times
+      \left(
+        \frac{\langle1356\rangle^3}{
+          \langle2356\rangle
+          \langle1236\rangle
+          \langle1256\rangle
+        }
+        +
+        \frac{\langle1345\rangle^3}{
+          \langle1234\rangle
+          \langle1245\rangle
+          \langle2345\rangle
+        }
+      \right).
+    \end{aligned}
+  \]\[
+C=(c_1,c_2,c_3,c_4,c_5,c_6),
+\qquad c_i\geq0
+\]
+  $D_6$ の定義を戻せば、主張の式が得られる。
+\end{myproof}
+同じように、このsuperamplitudeから負ヘリシティ粒子の選び方を変えることで、全部で全部で \(\binom63=20\) 個のグルーオン振幅を取り出すことができる。\\
+この章で導入された
+\[
+\mathcal P_6^{\mathrm{NMHV}}
+=
+[61234]+[61245]+[62345]
+\]
+は6粒子NMHV比関数という。次の章ではamplituhedoronの標準形からこのNMHV非関数である5braketを得る方法について考える。
+\section{Amplituhedron}
+\subsection{defenition of Amplituhedron}
+この章で扱うのは
+\[
+\mathcal A_{n,k,m}(\mathcal Z) = \mathcal A_{6,1,4}(\mathcal Z)
+\]
+というamplituhedronである。ここで、$n$は外部粒子の数、$k$は$N^k MHV$の次数、$m$は物理的な散乱振幅に対する選択である。
+この幾何学的対象を定義するため、外部データとして
+\[
+\mathcal Z=
+\begin{pmatrix}
+\mathcal Z_1\\
+\vdots\\
+\mathcal Z_6
+\end{pmatrix}
+\]
+という\(6\times5\) 行列を用意する。各行\(\mathcal Z_i\) は5成分を持ち、複素射影空間\(\mathbb {CP}^4\) の点を表す。\\
+実グラスマン多様体$\operatorname{Gr}_{k,n}$は\(\mathbb R^n\) の \(k\) 次元部分空間全体として定義される。そして、そのうち一つの部分空間は階数$k$の$k\times n$行列$C$の行空間として表せる。
+ただし、
+\[
+C\sim GC,
+\qquad G\in GL(k,\mathbb R)
+\]
+は同じ行空間を表し、この同値類を\([C]\)とする。代表元を適切に選ぶことで、順序を保って選んだすべての\(k\times k\) 小行列式が非負になるもの全体を正グラスマン多様体$\operatorname{Gr}_{k,n}^{\geq0}$とする。
+本章では$k = 1$なので、
+\[
+C=(c_1,c_2,c_3,c_4,c_5,c_6),
+\qquad c_i\geq0
+\]
+であり、全体の非零なスケール倍は同一視されるため、この空間の実次元は5になる。
+\begin{mydef}{Amplituhedron}
+  $k+m\leq n$ および $n>3$ を満たす正の整数 $n,k,m$ に対して、
+  tree-level のamplitugedron
+  $\mathcal{A}_{n,k,m}(\mathcal{Z})$ は、
+  全成分が正な $n\times(k+m)$ 行列 $\mathcal{Z}$ が誘導する写像
+  \begin{equation}
+    Y:[C]\longmapsto[C\mathcal{Z}]
+    \in\operatorname{Gr}_{k,k+m}
+    \tag{71}
+  \end{equation}
+  による、正グラスマン多様体
+  $\operatorname{Gr}_{k,n}^{\geq0}$ の像として定義される。
+  ここで $[C]$ は、正の $k\times n$ 行列 $C$ で表される
+  $\operatorname{Gr}_{k,n}$ の要素を表す。
+\end{mydef}
+$k=1$の場合には
+\[
+Y=c_1\mathcal Z_1+\cdots+c_6\mathcal Z_6,
+\qquad c_i\geq0
+\]
+となり、代表元を規格化すると$c_1+\cdots+c_6=1$として通常の凸多面体と同じ形で書くことができる。つまり、
+$\mathcal{A}_{6,1,4}(\mathcal{Z})$は六つの頂点 \(\mathcal Z_1,\ldots,\mathcal Z_6\) の凸包であることが分かる。\\
+外部データには順序を保って選んだ任意の5行について
+\[
+\det(\mathcal Z_{i_1},\ldots,\mathcal Z_{i_5})>0,
+\qquad i_1<\cdots<i_5
+\]
+という正定値正を課す。よって、本章のamplituhedronはこのような順序構造を持つ4次元の巡回多面体となる。
+しかし、4次元単体に必要な頂点は5個だけであるが、本章では頂点が6個あるため、全体をいくつかの4次元単体に分割して扱う。
+\subsection{canonical form}
+このような多面体から標準形式(canonical form)を構成する。まずは1次元の区間で考える。\\
+区間$a<x<b$に対して
+\[
+\Omega_{[a,b]}
+=
+\frac{(b-a)\,dx}{(x-a)(b-x)}
+=
+d\log\frac{x-a}{b-x}
+\]
+を考える。この1形式は区間の内部では特異点を持たず、その境界\(x=a,b\) で単純極を持つ。そしてその留数は向きに応じて$+1,-1$である。\\
+高次元でも同様に標準形式は、\\
+・領域の内部では極を持たない\\
+・境界に沿って対数特異点を持つ\\
+・境界での留数の値がその境界自身の標準形式になる
+\[
+\operatorname{Res}_{B}\Omega(P)=\Omega(B)
+\]
+という性質を持つ。\footnote{これは性質であり、\cite{AHBL2017}などに詳しく書かれている。}例えば、標準的な三角形
+\[
+x>0,\qquad y>0,\qquad x+y<1
+\]
+の標準形式は確かにそれらの性質を満たしていることが分かる。したがって、標準形式は領域の境界構造を微分形式として表したものとして理解できる。\\
+通常の座標で微分形式を
+\[
+\Omega=f(y)\,dy^1\wedge\cdots\wedge dy^4
+\]
+と書くように、$\operatorname{Gr}_{k,k+m}=\operatorname{Gr}_{1,5}$ 上の微分形式の族を
+\[
+\Omega_{6,1,4}(Y;\mathcal Z)
+=
+\omega_{6,1,4}(Y;\mathcal Z)\,
+\mu_{\mathbb P^4}(Y)
+\]
+で表すことができる。ここで\(\mu_{\mathbb P^4}\)は斉次座標で書いた4形式であり、
+\[
+\mu_{\mathbb P^4}(Y)
+=
+\sum_{a=1}^{5}
+(-1)^aY_a\,
+dY_1\wedge\cdots\wedge
+\widehat{dY_a}\wedge\cdots\wedge dY_5.
+\]
+となる。よって\(\omega\mu_{\mathbb P^4}\) 全体が射影空間上の形式となる。実際、\(Y\mapsto tY\) に対して
+\[
+\mu_{\mathbb P^4}(tY)=t^5\mu_{\mathbb P^4}(Y),
+\qquad
+\omega(tY)=t^{-5}\omega(Y)
+\]
+となり、積ではスケールが打ち消されることが分かる。\\
+次に5つの頂点$\mathcal Z_a,\mathcal Z_b,\mathcal Z_c,
+\mathcal Z_d,\mathcal Z_e$
+が作る単体を考える。例えば、$\langle Yabcd\rangle=0$ は\(Y\) が四つの頂点 \(\mathcal Z_a,\mathcal Z_b,\mathcal Z_c,\mathcal Z_d\) を通る平面上にあることを意味している。
+ここで、単体1つに対して
+\[
+\omega_{\{abcde\}}(Y;\mathcal Z)
+=
+\frac{\langle abcde\rangle^4}{
+\langle Yabcd\rangle
+\langle Ybcde\rangle
+\langle Ycdea\rangle
+\langle Ydeab\rangle
+\langle Yeabc\rangle
+}
+\]
+が標準形式の係数になることが知られている。これは、分母が$\Delta^5c_ac_bc_cc_dc_e$であり、分子が$\Delta^4$であることから
+\[
+\Omega_{\{abcde\}}
+=
+\frac{\mu_{\mathbb P^4}(c)}
+{c_ac_bc_cc_dc_e}
+\]
+の形になることから理解できる。\\
+また、6つの頂点を持つ本章の多面体は
+\[
+\Delta_{\{61234\}},
+\qquad
+\Delta_{\{61245\}},
+\qquad
+\Delta_{\{62345\}}
+\]
+という3つの4次元単体に分割することができる。標準形式は向きを揃えた単体分割について加法的であることから、
+\[
+\omega_{6,1,4}
+=
+\omega_{\{61234\}}
++\omega_{\{61245\}}
++\omega_{\{62345\}}
+\]
+が成立する。ここで、各単体の形式には内部の面に対応する極が現れるが、これは同じ内部の面を共有する二つの単体ではその面の向きが反対になることから、和を取ると留数が打ち消されることが分かる。
+よって、結果として多面体全体の境界に対応する極が残ることになる。この性質から、別の単体分割を使っても同じ標準形式が得られる。
+\subsection{From Amplituhedron To supertwistor}
+ここまでは通常の可換な外部データ$\mathcal{Z}_i$から多面体と標準形式を作ってきた。次は
+この外部データに
+\[
+\mathcal Z_i
+=
+\left(
+Z_i^1,Z_i^2,Z_i^3,Z_i^4,
+\sum_{A=1}^{4}\phi^A\chi_i^A
+\right)
+\]
+を形式的に導入することを考える。\(\phi^A\) も \(\chi_i^A\) もグラスマン奇変数なのでその積 \(\phi^A\chi_i^A\) は偶変数となる。よって、これを可換な第5成分として扱うことができる。\\
+先に外部データから有利関数の形式を求め、その後でグラスマン変数を含む式を代入することを考える。さらに、
+\[
+Y=Y_0=(0:0:0:0:1)
+\]
+と置く。すると、
+\[
+\langle Y_0abcd\rangle
+=
+\det
+\begin{pmatrix}
+0&0&0&0&1\\
+Z_a^1&Z_a^2&Z_a^3&Z_a^4&\phi^A\chi_a^A\\
+Z_b^1&Z_b^2&Z_b^3&Z_b^4&\phi^A\chi_b^A\\
+Z_c^1&Z_c^2&Z_c^3&Z_c^4&\phi^A\chi_c^A\\
+Z_d^1&Z_d^2&Z_d^3&Z_d^4&\phi^A\chi_d^A
+\end{pmatrix}
+=
+\langle abcd\rangle.
+\]
+となり、標準形式の係数に出てきた分母は4braketで書くことができる。\\
+分子の5次行列式を第5列目について展開すると、
+\[
+\langle abcde\rangle
+=
+\sum_{A=1}^{4}\phi^A\Theta_{abcde}^A,
+\]
+ただし、
+\[
+\begin{aligned}
+\Theta_{abcde}^A
+={}&
+\langle abcd\rangle\chi_e^A
++\langle bcde\rangle\chi_a^A\\
+&+\langle cdea\rangle\chi_b^A
++\langle deab\rangle\chi_c^A
++\langle eabc\rangle\chi_d^A
+\end{aligned}
+\]
+となる。次に、
+\[
+\langle abcde\rangle^4
+=
+\left(\sum_A\phi^A\Theta_{abcde}^A\right)^4
+\]
+をグラスマン積分することを考える。グラスマン数の性質より
+\[
+\left(\sum_A\phi^A\Theta^A\right)^4
+=
+4!\,
+\phi^1\phi^2\phi^3\phi^4
+\Theta^1\Theta^2\Theta^3\Theta^4
+\]
+なので、
+\[
+\frac1{4!}
+\int\langle abcde\rangle^4\,d^4\phi
+=
+\prod_{A=1}^{4}\Theta_{abcde}^A.
+\]
+となる。これらを組み合わせると以下の公式を得ることができる。
+\begin{mythm}{canonical form $\to$ 5braket}
+  \[
+\frac1{4!}
+\int
+\omega_{\{abcde\}}(Y_0;\mathcal Z)\,d^4\phi
+=
+[abcde]
+\]
+\end{mythm}
+\begin{myproof}
+  外部データと基準点を
+  \[
+    \mathcal Z_i
+      =
+      \left(
+        Z_i^1,Z_i^2,Z_i^3,Z_i^4,
+        \sum_{A=1}^{4}\phi^A\chi_i^A
+      \right),
+    \qquad
+    Y_0=(0:0:0:0:1)
+  \]
+  とする。ここで、$\phi^A,\chi_i^A$ は互いに反交換する
+  グラスマン奇変数であり、積分の規格化を
+  \[
+    \int\phi^1\phi^2\phi^3\phi^4\,d^4\phi=1
+  \]
+  と定める。
+
+  単体の標準形式の係数は
+  \[
+    \omega_{\{abcde\}}(Y;\mathcal Z)
+      =
+      \frac{
+        \langle abcde\rangle^4
+      }{
+        \langle Yabcd\rangle
+        \langle Ybcde\rangle
+        \langle Ycdea\rangle
+        \langle Ydeab\rangle
+        \langle Yeabc\rangle
+      }
+  \]
+  である。ここで、5個のベクトルを含む括弧は、
+  $\mathcal Z_i$ および $Y$ を用いた
+  $5\times5$ 行列式を表す。
+
+  まず、$Y=Y_0$ を代入して行列式を展開すると、
+  \[
+    \langle Y_0abcd\rangle
+      =\det(Z_a,Z_b,Z_c,Z_d)
+      =\langle abcd\rangle
+  \]
+  となる。他の分母因子についても同様なので、
+  \[
+    \omega_{\{abcde\}}(Y_0;\mathcal Z)
+      =
+      \frac{
+        \langle abcde\rangle^4
+      }{
+        \langle abcd\rangle
+        \langle bcde\rangle
+        \langle cdea\rangle
+        \langle deab\rangle
+        \langle eabc\rangle
+      }.
+  \]
+  特に、この分母は $\phi$ に依存しない。
+
+  次に、分子の行列式を第5列について展開する。
+  \[
+    \begin{aligned}
+      \langle abcde\rangle
+      &=
+      \sum_{A=1}^{4}\phi^A
+      \left(
+        \langle abcd\rangle\chi_e^A
+        +\langle bcde\rangle\chi_a^A
+        +\langle cdea\rangle\chi_b^A
+        +\langle deab\rangle\chi_c^A
+        +\langle eabc\rangle\chi_d^A
+      \right).
+    \end{aligned}
+  \]
+  そこで、
+  \[
+    \begin{aligned}
+      \Theta_{abcde}^A
+      :={}&
+      \langle abcd\rangle\chi_e^A
+      +\langle bcde\rangle\chi_a^A
+      +\langle cdea\rangle\chi_b^A\\
+      &+\langle deab\rangle\chi_c^A
+      +\langle eabc\rangle\chi_d^A
+    \end{aligned}
+  \]
+  とおけば、
+  \[
+    \langle abcde\rangle
+      =\sum_{A=1}^{4}\phi^A\Theta_{abcde}^A
+  \]
+  と書ける。
+
+  各 $\Theta_{abcde}^A$ はグラスマン奇変数であるため、
+  $\phi^A\Theta_{abcde}^A$ は偶であり、
+  これらの因子は互いに可換である。
+  また、$(\phi^A)^2=0$ なので、
+  4乗の展開で残るのは、四つの異なる $\phi^A$ を
+  一度ずつ含む項だけである。したがって、
+  \[
+    \begin{aligned}
+      \langle abcde\rangle^4
+      &=
+      \left(
+        \sum_{A=1}^{4}\phi^A\Theta_{abcde}^A
+      \right)^4\\
+      &=
+      4!\,
+      (\phi^1\Theta_{abcde}^1)
+      (\phi^2\Theta_{abcde}^2)
+      (\phi^3\Theta_{abcde}^3)
+      (\phi^4\Theta_{abcde}^4)\\
+      &=
+      4!\,
+      \phi^1\phi^2\phi^3\phi^4
+      \prod_{A=1}^{4}\Theta_{abcde}^A.
+    \end{aligned}
+  \]
+  最後の並べ替えでは、奇変数同士の交換を
+  $1+2+3=6$ 回行うため、符号は正となる。
+
+  よって、グラスマン積分により
+  \[
+    \frac1{4!}
+    \int\langle abcde\rangle^4\,d^4\phi
+      =
+      \prod_{A=1}^{4}\Theta_{abcde}^A
+  \]
+  を得る。分母が $\phi$ に依存しないことを用いれば、
+  \[
+    \begin{aligned}
+      &\frac1{4!}
+      \int
+      \omega_{\{abcde\}}(Y_0;\mathcal Z)\,d^4\phi\\
+      &=
+      \frac{
+        \displaystyle\prod_{A=1}^{4}\Theta_{abcde}^A
+      }{
+        \langle abcd\rangle
+        \langle bcde\rangle
+        \langle cdea\rangle
+        \langle deab\rangle
+        \langle eabc\rangle
+      }=[abcde].
+    \end{aligned}
+  \]
+  最後の等号は、5ブラケットの定義による。
+\end{myproof}
+つまり、1つの単体の標準形式が1つの5braketに変換されることが分かる。
+\subsection{NMHV superamplitude from Amplituhedron}
+3つの単体の形式を足してから同じ操作を行うと、
+\[
+\begin{aligned}
+\frac1{4!}
+\int
+\omega_{6,1,4}(Y_0;\mathcal Z)\,d^4\phi
+&=
+[61234]+[61245]+[62345]\\
+&=
+\mathcal P_6^{\mathrm{NMHV}}
+\end{aligned}
+\]
+が得られる。これにMH superamplitude をかけると
+\[
+\mathcal A_6^{\mathrm{NMHV}}
+=
+\frac{\delta^{(8)}(q)}
+{\langle12\rangle\langle23\rangle
+\langle34\rangle\langle45\rangle
+\langle56\rangle\langle61\rangle}
+\bigl(
+[61234]+[61245]+[62345]
+\bigr)
+\]
+となる。さらに前章の成分抽出を行えば任意のhelicity amplitude を求めることができる。
+\[
+\begin{aligned}
+\text{4-simplex $\times 3$}
+&\longrightarrow
+\omega_{\{61234\}}
++\omega_{\{61245\}}
++\omega_{\{62345\}}\\
+&\longrightarrow
+[61234]+[61245]+[62345]\\
+&\longrightarrow
+\mathcal A_6^{\mathrm{NMHV}}\\
+&\longrightarrow
+A_6(1^-,2^-,3^-,4^+,5^+,6^+)
+\end{aligned}
+\]
+\begin{mythm}{7-particle NMHV superamplitude from two triangulations}
+  $\mathcal Z\in\mathbb R^{7\times5}$ を、順序付き最大小行列式が
+  \[
+    \langle i_1i_2i_3i_4i_5\rangle>0,
+    \qquad
+    1\leq i_1<i_2<i_3<i_4<i_5\leq7
+  \]
+  を満たす外部データとする。
+  その行が表す点を頂点とする巡回多面体を
+  \[
+    P:=\mathcal A_{7,1,4}(\mathcal Z)
+  \]
+  と書く。また、
+  \[
+    \Delta_{abcde}
+      :=\operatorname{conv}
+      \{\mathcal Z_a,\mathcal Z_b,\mathcal Z_c,
+        \mathcal Z_d,\mathcal Z_e\}
+  \]
+  と定める。
+
+  この多面体は、次の二通りの単体分割を持つ。
+  \[
+    P=
+    \bigcup_{(a,b,c,d,e)\in\mathcal T_7}
+    \Delta_{abcde}
+    =
+    \bigcup_{(a,b,c,d,e)\in\mathcal T_1}
+    \Delta_{abcde},
+  \]
+  ただし、
+  \[
+    \begin{aligned}
+      \mathcal T_7
+      =\{&
+        (7,1,2,3,4),\,
+        (7,1,2,4,5),\,
+        (7,1,2,5,6),\\
+        & (7,2,3,4,5),\,
+        (7,2,3,5,6),\,
+        (7,3,4,5,6)
+      \},
+    \end{aligned}
+  \]
+  \[
+    \begin{aligned}
+      \mathcal T_1
+      =\{&
+        (1,2,3,4,5),\,
+        (1,2,3,5,6),\,
+        (1,2,3,6,7),\\
+        & (1,3,4,5,6),\,
+        (1,3,4,6,7),\,
+        (1,4,5,6,7)
+      \}.
+    \end{aligned}
+  \]
+  各分割において、異なる単体の内部は互いに交わらない。
+
+  これらの分割から得られるNMHV比関数は、
+  \[
+    \begin{aligned}
+      \mathcal P_7^{(7)}
+      :={}&
+        [71234]+[71245]+[71256]\\
+        &+[72345]+[72356]+[73456],
+    \end{aligned}
+  \]
+  \[
+    \begin{aligned}
+      \mathcal P_7^{(1)}
+      :={}&
+        [12345]+[12356]+[12367]\\
+        &+[13456]+[13467]+[14567]
+    \end{aligned}
+  \]
+  であり、
+  \[
+    \mathcal P_7^{(7)}=\mathcal P_7^{(1)}
+  \]
+  が成り立つ。
+
+  したがって、7粒子NMHV超振幅は
+  \[
+    \boxed{
+      \mathcal A_7^{\mathrm{NMHV}}
+        =
+        \frac{\delta^{(8)}(q)}{
+          \langle12\rangle\langle23\rangle
+          \langle34\rangle\langle45\rangle
+          \langle56\rangle\langle67\rangle
+          \langle71\rangle
+        }\mathcal P_7^{(7)}
+        =
+        \frac{\delta^{(8)}(q)}{
+          \langle12\rangle\langle23\rangle
+          \langle34\rangle\langle45\rangle
+          \langle56\rangle\langle67\rangle
+          \langle71\rangle
+        }\mathcal P_7^{(1)}.
+    }
+  \]
+  ここで、
+  \[
+    q^{\alpha A}
+      :=\sum_{r=1}^{7}\lambda_r^\alpha\eta_r^A
+  \]
+  であり、$\chi$ と $\eta$ の関係は前節の変換公式に従う。
+\end{mythm}
+
+\begin{myproof}
+  まず、二つの単体分割を構成する。
+
+  四つの頂点の添字を
+  $F=\{f_1<f_2<f_3<f_4\}$ とし、それらを通る超平面を
+  \[
+    h_F(Y)
+      :=\det(
+        \mathcal Z_{f_1},
+        \mathcal Z_{f_2},
+        \mathcal Z_{f_3},
+        \mathcal Z_{f_4},
+        Y
+      )=0
+  \]
+  と書く。$r\notin F$ に対して、最大小行列式の正値性より、
+  \[
+    \operatorname{sgn}h_F(\mathcal Z_r)
+      =
+      (-1)^{\#\{f\in F:f>r\}}
+  \]
+  である。
+
+  $F$ がファセットを定めるための条件は、
+  残りの頂点における $h_F$ の符号がすべて一致することである。
+  特に、頂点7を含まないファセットでは
+  $h_F(\mathcal Z_7)>0$ なので、
+  残りの頂点でも符号が正でなければならない。
+  この条件から、$F$ は二組の隣接する添字からなり、
+  頂点7を含まないファセットは
+  \[
+    \begin{gathered}
+      \{1,2,3,4\},\quad
+      \{1,2,4,5\},\quad
+      \{1,2,5,6\},\\
+      \{2,3,4,5\},\quad
+      \{2,3,5,6\},\quad
+      \{3,4,5,6\}
+    \end{gathered}
+  \]
+  の六つとなる。
+
+  これらの各ファセットと頂点7との凸包を取ると、
+  $\mathcal T_7$ に対応する六つの4次元単体が得られる。
+  頂点7から内部点へ伸ばした半直線は、
+  頂点7を含まないファセットに到達するため、
+  これらの単体は $P$ 全体を覆い、
+  異なる単体の内部は互いに交わらない。
+
+  同様に、頂点1を含まないファセットは
+  \[
+    \begin{gathered}
+      \{2,3,4,5\},\quad
+      \{2,3,5,6\},\quad
+      \{2,3,6,7\},\\
+      \{3,4,5,6\},\quad
+      \{3,4,6,7\},\quad
+      \{4,5,6,7\}
+    \end{gathered}
+  \]
+  である。これらと頂点1との凸包を取ることで、
+  $\mathcal T_1$ による単体分割が得られる。
+
+  次に、それぞれの単体の標準形式を計算する。
+  向きの規約を共通に固定すると、
+  \[
+    \Omega_{\{abcde\}}(Y;\mathcal Z)
+      =
+      \omega_{\{abcde\}}(Y;\mathcal Z)
+      \mu_{\mathbb P^4}(Y),
+  \]
+  \[
+    \omega_{\{abcde\}}(Y;\mathcal Z)
+      =
+      \frac{
+        \langle abcde\rangle^4
+      }{
+        \langle Yabcd\rangle
+        \langle Ybcde\rangle
+        \langle Ycdea\rangle
+        \langle Ydeab\rangle
+        \langle Yeabc\rangle
+      }.
+  \]
+  例えば、最初の分割に現れる単体については、
+  \[
+    \omega_{\{71234\}}(Y;\mathcal Z)
+      =
+      \frac{
+        \langle71234\rangle^4
+      }{
+        \langle Y7123\rangle
+        \langle Y1234\rangle
+        \langle Y2347\rangle
+        \langle Y3471\rangle
+        \langle Y4712\rangle
+      }
+  \]
+  となる。他の単体にも同じ公式を適用する。
+
+  標準形式の単体分割に関する加法性から、
+  \[
+    \begin{aligned}
+      \omega_{7,1,4}
+      ={}&
+        \omega_{\{71234\}}
+        +\omega_{\{71245\}}
+        +\omega_{\{71256\}}\\
+        &+\omega_{\{72345\}}
+        +\omega_{\{72356\}}
+        +\omega_{\{73456\}},
+    \end{aligned}
+  \]
+  また、
+  \[
+    \begin{aligned}
+      \omega_{7,1,4}
+      ={}&
+        \omega_{\{12345\}}
+        +\omega_{\{12356\}}
+        +\omega_{\{12367\}}\\
+        &+\omega_{\{13456\}}
+        +\omega_{\{13467\}}
+        +\omega_{\{14567\}}
+    \end{aligned}
+  \]
+  である。ここでは引数 $(Y;\mathcal Z)$ を省略した。
+  内部の共有面における留数は反対の向きを持つため相殺し、
+  どちらの和も $P$ の境界を持つ同じ標準形式を与える。
+
+  この標準形式を求めた後、
+  \[
+    \mathcal Z_r
+      \longmapsto
+      \left(
+        Z_r^1,Z_r^2,Z_r^3,Z_r^4,
+        \sum_{A=1}^{4}\phi^A\chi_r^A
+      \right),
+    \qquad
+    Y_0=(0:0:0:0:1)
+  \]
+  を形式的に代入する。
+  グラスマン積分の規格化を
+  \[
+    \int\phi^1\phi^2\phi^3\phi^4\,d^4\phi=1
+  \]
+  とすれば、前定理より各単体について
+  \[
+    \frac1{4!}
+    \int
+    \omega_{\{abcde\}}(Y_0;\mathcal Z)\,d^4\phi
+      =[abcde]
+  \]
+  が成り立つ。
+
+  したがって、最初の分割からは
+  \[
+    \begin{aligned}
+      \frac1{4!}
+      \int\omega_{7,1,4}(Y_0;\mathcal Z)\,d^4\phi
+      ={}&
+        [71234]+[71245]+[71256]\\
+        &+[72345]+[72356]+[73456]\\
+      ={}&\mathcal P_7^{(7)}
+    \end{aligned}
+  \]
+  を得る。同じ積分を第2の分割で計算すれば、
+  \[
+    \begin{aligned}
+      \frac1{4!}
+      \int\omega_{7,1,4}(Y_0;\mathcal Z)\,d^4\phi
+      ={}&
+        [12345]+[12356]+[12367]\\
+        &+[13456]+[13467]+[14567]\\
+      ={}&\mathcal P_7^{(1)}
+    \end{aligned}
+  \]
+  となる。よって、
+  \[
+    \mathcal P_7^{(7)}=\mathcal P_7^{(1)}
+  \]
+  である。
+
+  この等式は、5ブラケットの六項恒等式からも確認できる。
+  まず、巡回対称性を使うと、
+  \[
+    \begin{aligned}
+      \mathcal P_7^{(7)}
+      ={}&
+        [12347]+[12457]+[12567]\\
+        &+[23457]+[23567]+[34567].
+    \end{aligned}
+  \]
+  六つのラベルの組
+  $\{1,2,3,4,5,7\}$、
+  $\{1,2,3,5,6,7\}$、
+  $\{1,3,4,5,6,7\}$
+  に六項恒等式を適用すると、
+  \[
+    \begin{aligned}
+      [12347]+[12457]+[23457]
+      &=[12345]+[12357]+[13457],\\
+      [12357]+[12567]+[23567]
+      &=[12356]+[12367]+[13567],\\
+      [13457]+[13567]+[34567]
+      &=[13456]+[13467]+[14567]
+    \end{aligned}
+  \]
+  を得る。これらを順に用いれば、
+  $\mathcal P_7^{(7)}$ は
+  $\mathcal P_7^{(1)}$ に書き換えられる。
+
+  最後に、得られた比関数にMHV超振幅
+  \[
+    \mathcal A_7^{\mathrm{MHV}}
+      =
+      \frac{\delta^{(8)}(q)}{
+        \langle12\rangle\langle23\rangle
+        \langle34\rangle\langle45\rangle
+        \langle56\rangle\langle67\rangle
+        \langle71\rangle
+      }
+  \]
+  を掛けると、
+  \[
+    \mathcal A_7^{\mathrm{NMHV}}
+      =
+      \mathcal A_7^{\mathrm{MHV}}\mathcal P_7^{(7)}
+      =
+      \mathcal A_7^{\mathrm{MHV}}\mathcal P_7^{(1)}
+  \]
+  となり、二通りの単体分割から同じ超振幅が得られる。
+\end{myproof}
+\subsection{star triangulation}
+よって、頂点が$n$個ある凸多面体を4-simplex で分割する方法さえ分かればsuperamplitude を計算できることが分かった。
+この分割方法には一般に規則があり、絵を書いて求めることができる。これをstar triangulationという。
+この巡回凸多面体は$\mathcal Z_i\in\mathbb R^5$ であったため、Amplituhedronは
+\[
+P=
+\left\{
+\left[\sum_{i=1}^{n}c_i\mathcal Z_i\right]
+\;\middle|\;
+c_i\geq0,\quad(c_1,\ldots,c_n)\neq0
+\right\}
+\subset\mathbb{RP}^{4}
+\]
+という実射影空間上で定義されていたが、全頂点を含む適切なアフィン座標を選ぶと、これは通常の
+\[
+P=\operatorname{conv}\{v_1,\ldots,v_n\}
+\subset\mathbb R^4
+\]
+という凸多面体となる。標準形式を扱う段階では周囲の空間を複素化し、\(\Omega\) を \(\mathbb{CP}^{4}\) 上の有理型微分形式として考えることが必要であったが、外部データとして計算する段階ではこれらの議論から$\mathbb{R}^4$の部分空間である凸多面体$P$の4-単体による分割をすればいい。\\\\
+具体的な方法として以下がある\\
+1. 頂点 \(n\) を固定する。\\
+2. 残りの頂点を \(1,2,\ldots,n-1\) の順に並べる。\\
+3. 端点を共有しない二つの隣接辺\[
+   (i,i+1),\qquad(j,j+1)
+   \]
+   を選ぶ。\\
+4. その四つの端点に固定頂点 \(n\) を加え、4単体$\Delta_{\{n,i,i+1,j,j+1\}}$
+   を作る。\\
+この規則で得られる単体をすべて集めれば、一つの単体分割になることが知られている。この分割は明らかに一意ではないが、向きが逆の標準形式の留数は相殺されることから$\omega$は一意に決まる。\\
+分割を列挙した時点で
+\[
+\Delta_{\{n,i,i+1,j,j+1\}}
+\longmapsto
+[n\,i\,i+1\,j\,j+1]
+\]
+より
+\[
+\mathcal P_n^{\mathrm{NMHV}}
+=
+\sum_{i=1}^{n-4}
+\sum_{j=i+2}^{n-2}
+[n\,i\,i+1\,j\,j+1]
+\]
+が得られるので、superamplitudeも
+\[
+\boxed{
+\mathcal A_n^{\mathrm{NMHV}}
+=
+\mathcal A_n^{\mathrm{MHV}}\,
+\mathcal P_n^{\mathrm{NMHV}}
+}
+\]
+となる。これはBCFW recursion からも得られることが知られている。\\
+選ぶ単体の数は
+\[
+N_n
+=
+\sum_{i=1}^{n-4}(n-i-3)
+=
+\binom{n-3}{2}
+=
+\frac{(n-3)(n-4)}2
+\]
+であるので、この分割の列挙は\(O(n^2)\) でできる。より一般の\(\mathrm N^k\mathrm{MHV}\)では、on-shell diagramやplabic graphとBCFW recursion が主な道具として使用される。
+そこでは、正グラスマン多様体のセルを白黒頂点の平面グラフで表し、再帰的にamplitude の項を組み立てている。\cite{LAM2026}
+
+
+
+
+
+
+
+
+\begin{thebibliography}{DPSV25}
+
+\bibitem[DPSV25]{DE2025}
+S.~De, D.~Pavlov, M.~Spradlin, and A.~Volovich,
+\emph{From Feynman diagrams to the amplituhedron: a gentle review},
+Le Matematiche \textbf{80} (2025), no.~1, 233--254.
+arXiv:2410.11757 [hep-th].
+doi:10.4418/2025.80.1.9.
+
+\bibitem[AT14]{AHT2014}
+N.~Arkani-Hamed and J.~Trnka,
+\emph{The Amplituhedron},
+JHEP \textbf{10} (2014), 030.
+arXiv:1312.2007 [hep-th].
+doi:10.1007/JHEP10(2014)030.
+
+\bibitem[ABL17]{AHBL2017}
+N.~Arkani-Hamed, Y.~Bai, and T.~Lam,
+\emph{Positive Geometries and Canonical Forms},
+JHEP \textbf{11} (2017), 039.
+arXiv:1703.04541 [hep-th].
+doi:10.1007/JHEP11(2017)039.
+
+\bibitem[Lam26]{LAM2026}
+T.~Lam,
+\emph{The Combinatorial Geometry of Particle Physics},
+in \emph{Proceedings of the International Congress of
+Mathematicians 2026},
+Vol.~4: Invited Lectures (Sections 5--8),
+S.~Friedlander and Y.~Tschinkel, eds.,
+SIAM, 2026, pp.~565--585.
+doi:10.1137/25M1804959.
+
+\end{thebibliography}
+
+\end{document}
