@@ -1,0 +1,35 @@
+\documentclass[uplatex,dvipdfmx]{jsarticle}
+\usepackage{amsmath,amssymb}
+\usepackage{bm}
+\usepackage{float}
+\usepackage{mathtools}
+\usepackage{ascmac}
+\usepackage{mathrsfs}
+\usepackage{physics}
+\usepackage{here}
+\usepackage{url}
+\usepackage{slashed}
+\usepackage{tikz-cd}
+\usepackage[top=25truemm,bottom=30truemm,left=20truemm,right=20truemm]{geometry}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\begin{document}
+
+Fermion場 $\psi$を用いた最もシンプルなbosonicな物理量として
+\begin{equation*}
+     \mathcal{O}(x) = \bar{\psi}(x)\psi(x) ~~~\mathcal{O}(y) = \bar{\psi}(y)\psi(y)
+\end{equation*}
+を考える.~Fermionの半交換関係は
+\begin{equation*}
+    \{\psi(x), \bar{\psi}(y)\} = i\Delta(x-y), \quad \{\psi(x), \psi(y)\} = 0, \quad \{\bar{\psi}(x), \bar{\psi}(y)\} = 0
+\end{equation*}
+となる.~この半交換関係を用いて,~$\mathcal{O}(x)$ と $\mathcal{O}(y)$ の交換関係を計算すると,
+\begin{equation*}
+    [AB, CD] = A\{B, C\}D - \{A, C\}BD + C A\{B, D\} - C\{A, D\}B
+\end{equation*}
+より,~$[\mathcal{O}(x), \mathcal{O}(y)]$ は $\Delta(x-y)$ のような項のみを含むことが分かる.~$x,~y$が空間的に離れているとき,~Lorentz不変性から $\Delta(x-y) = 0$ となることが分かる.~したがって,~
+\begin{equation*}
+    [\mathcal{O}(x), \mathcal{O}(y)] = 0 \quad \text{for} \quad (x-y)^2 < 0
+\end{equation*}
+となり,~空間的に離れた場所で独立に観測可能になるので,~因果律が保たれることが分かる.
+\end{document}

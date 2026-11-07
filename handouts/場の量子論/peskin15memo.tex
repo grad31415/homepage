@@ -1,0 +1,159 @@
+\documentclass[uplatex,dvipdfmx]{jsarticle}
+\usepackage{amsmath,amssymb}
+\usepackage{bm}
+\usepackage{float}
+\usepackage{mathtools}
+\usepackage{ascmac}
+\usepackage{mathrsfs}
+\usepackage{physics}
+\usepackage{here}
+\usepackage{url}
+\usepackage{slashed}
+\usepackage{tikz-cd}
+\usepackage[top=25truemm,bottom=30truemm,left=20truemm,right=20truemm]{geometry}
+\usepackage{xcolor}
+\usepackage{titlesec}
+% 文字サイズを大きくする設定
+\titleformat{\section}{\huge\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\Large\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\Large\bfseries}{\thesubsubsection}{1em}{}
+\usepackage{tcolorbox}
+\tcbuselibrary{breakable, skins, theorems}
+\usepackage[dvipdfmx]{hyperref}
+\usepackage{pxjahyper}
+\usepackage{bookmark}
+\begin{document}
+\title{ホロノミー準同型とWilson loop}
+\author{grad}
+\date{\today}
+\maketitle
+\hypertarget{toc}{}\tableofcontents
+\section{ホロノミー準同型とWilson loop}
+Wilson loopとホロノミーを説明して,~その関係についてゲージ場と重力場を例に説明した自分用のメモ.
+\subsection{The Gauge-invariant Wilson loop~(Peskin 15.3)}
+Peskin 15.3節の内容をまとめる.\\
+まずは可換な$U(1)$ゲージ理論について考える.~$U(1)$ゲージ場の変換則
+\begin{equation}
+    A_\mu(x) \to A_\mu(x) - \frac{1}{e}\partial_\mu \alpha(x)
+\end{equation}
+を持つ接続$A_\mu$を考え,~比較演算子 $U(z, y)$を明示的に構成すると以下のようになる.\\
+\begin{equation}
+    U(z, y)_P = \exp\left[-ie\int_P dx^\mu A_\mu(x)\right]
+\end{equation}
+ここで,~積分は $y$ から $z$ へ走る任意の経路 $P$ に沿って行われる.~$U_P(z,y)$ はウWilson lineと呼ばれ,~有限に離れた点に対する比較演算子の明示的な構成となる.\\
+Wilson lineの重要な性質は比較演算子と同様にその経路$P$に依存することである.~もし,~$P$が閉曲線の場合なら,~Wilson loopを得る.
+\begin{equation}
+    U_P(y,y) = \exp \left[ -ie \oint dx^\mu A_\mu(x) \right]
+\end{equation}
+この量は明らかにゲージ場の関数であり,~loopであることから局所的にゲージ不変であることが分かる.~また,~ゲージ場から構成される任意のゲージ不変な関数は,~様々な経路の選択に対するWilson loopの組み合わせとして考えることができる.\\
+この主張の動機付けとして,~Stokesの定理を用いてWilson loopを次のように書き換えられる.
+\begin{equation}
+    U_P(y,y) = \exp \left[ -\frac{ie}{2} \int_\Sigma d\sigma^{\mu\nu} F_{\mu\nu} \right]
+\end{equation}
+ここで,~$\Sigma$はループ$P$を境界とする任意の面である.~この式はWilson loopがゲージ場の曲率$F_{\mu\nu}$の関数であることを示している.\\
+これを非可換ゲージ理論の場合に一般化する.~しかし,~非可換行列の指数関数を積分する際に問題が生じる.~なぜなら,~これらの行列は異なる点において必ずしも可換ではないからだ.~この処方として順序付けの処方を与えて考える.\\
+$s$ を経路 $P$ のパラメータとし,~始点を$x(0) = y$~,終点を$x(1) = z$になるとする.~そして,~Wilson lineを指数関数の級数展開として定義し.~各項の行列は$s$のより高い値が左側にくるように順序付ける.\\
+この処方は経路順序付け(path-ordering)と呼ばれ,~記号 $P \{ \}$ で表される.~従って,~Wilson lineは次のように書かれる.
+\begin{equation}
+    U_P(z,y) = P \left\{ \exp \left[ ig \int_0^1 ds \frac{dx^\mu}{ds} A_\mu^a(x(s)) t^a \right] \right\}
+\end{equation}
+この表式は,~相互作用表示のプロパゲーターに対して式(4.23)で書いた時間順序指数関数に似ている.~この類推を進めると,~$U_P$ に対するこの表式が,~(4.24)に似た微分方程式の解であることが示せる.
+\begin{equation}
+    \frac{d}{ds} U_P(x(s), y) = \left( ig \frac{dx^\mu}{ds} A_\mu^a(x(s)) t^a \right) U_P(x(s), y)
+\end{equation}
+ここでは,~終点で $s=1$ と固定するのではなく,~$U_P$ をパラメータ $s$ の連続関数として考える.
+式(15.56)がウィルソン・ラインの正しい一般化であることを示すために、それが正しいゲージ変換則(15.22)を満たすことを示さなければならない.~これは微分方程式(15.57)から導かれ,~次のように書き換えることができる.
+\begin{equation}
+    \frac{dx^\mu}{ds} D_\mu U_P(x, y) = 0
+\end{equation}
+ここで,~$A^g$ を場の配位 $A$ のゲージ変換とし,~ゲージ関数のゲージ場への依存性を明示的に示すためにこれらの引数を用いる.~我々は次のことを示したい.
+\begin{equation}
+    U_P(x, y) \to U_P^g(x, y) = g(x) U_P(x, y) g^{-1}(y)
+\end{equation}
+これは(15.22)と等価であり,~その無限小変換である以下の関係を(15.30)で証明した.
+\begin{equation}
+    D_\mu(A^g) g(x) = g(x) D_\mu(A)
+\end{equation}
+この関係を用いて,~ゲージ変換後の$U_P^g$は(15.59)は(15.58)を満たしており.~固定された境界条件下での1階微分方程式の解の一意性から,~$U_P(z,y)$ が(15.57)または(15.58)の解として定義されるならば,~それは確かに変換則(15.59)を持つことが分かる.\\
+$y$に戻る閉経路に関連するWilson loopは,~$y$でのゲージパラメータのみによって変換され,~ゲージ不変量でないことが分かる.
+\begin{equation}
+    U_P(y,y) \rightarrow V(y)U_P(y,y)V^\dagger(y)
+\end{equation}
+これをゲージ不変量にするために,~トレースを取る.~巡回不変性から,~ゲージ不変量なWilson loopは以下のようになる.
+\begin{equation}
+    W_P(y,y) = \text{Tr} \left[ U_P(y,y) \right] = \text{Tr} \left[ P \exp \left( ig \oint_P dx^\mu A_\mu^a t^a \right) \right]
+\end{equation}
+\newpage
+\subsection{Wilson loopとホロノミー準同型}
+時空を多様体$M$,~ゲージ群をLie群$G$として,~$M$ 上の接続付き主 $G$-束 $\pi: P \to M$ を考える.~ゲージ場$A$はこの主束上の接続$\omega$から切断の引き戻し$s^*$によって与えられる$\mathfrak{g}$-値$M$上1-形式である.~この接続$\omega$は,~$P$ 上の曲率2-形式 $\Omega = D\omega = d\omega + \frac{1}{2}[\omega, \omega]$ を定義する.\\
+多様体 $M$ 上の基点 $x \in M$ を始点と終点にするループの集合を$\Omega(M, x)$として,~この集合に対して結合を積とする演算を入れてループ群$\Omega(M, x)$を定義する.~\\
+ループ $\gamma \in \Omega(M, x)$ に沿って,~接続 $A$ によって定まる水平lift$\tilde{\gamma}$を考えると,~この水平lift$\tilde{\gamma}$は$P$上で\textbf{一意に}定まることが知られている.~(horizontal liftの一意性と呼ばれる微分幾何学の有名定理である.~これはコンパクトな$C^\infty$多様体$F$をファイバーとするファイバーバンドルに対してloopでなくlineのliftとしても成り立つ.~局所座標表示すると,~(6,7)~のODEを解くことと同値であり,~境界条件が定まるため解は存在して一意となる.)\\
+この水平liftは,~ループ $\gamma$ のliftなので底空間$M$のレベルでは同じ点に戻るが,~ファイバーのレベルでは一般に異なる点に戻ることがある.~このとき,~ループの水平liftの終点は始点と同じファイバー上の点であるため,~始点と終点は常に群 $G$ のある要素 $g_\gamma$ によって,$u$ から $u g_\gamma$ に関連付けられる.\\
+\textbf{この話をまとめると,~底空間$M$の基点$x$を始点終点とするループ$\gamma$が定まると,~接続によって一意に定まる主束$P$上への水平lift$\tilde{\gamma}$から,~ファイバー上の$\tilde{\gamma}$の始点と終点を繋げる群の元$g_\gamma$が定まる.}\\
+この対応$\gamma \to g_\gamma$は,~ループ群$\Omega(M, x)$から群$G$への写像を定める.~この写像$\Phi: \Omega(M, x) \to G$を\textbf{ホロノミー準同型}といい,~像は\textbf{ホロノミー群}$\text{Hol}_u(P,\omega) = \text{Im}(\Phi_\omega)\subset G$と呼ばれる$G$の部分群である.\\
+また,~基本群の単位元を表すループの集合を$\Omega_0(M,x)=\{\gamma \in \Omega(M, x) \mid [\gamma]=1 \in \pi_1(M, x) \}$としたとき,~この群のホロノミー準同型による像を$\text{Hol}_0(P, \omega) = \Phi_\omega(\Omega_0(M,x))$と定義して,~これを\textbf{制限ホロノミー群}とよぶ.\\
+ホロノミー準同型は以下の性質を満たすことが知られている.
+\begin{equation}
+    \begin{split}
+    \Phi_\omega(\gamma_1 \circ \gamma_2) &= \Phi_\omega(\gamma_1) \Phi_\omega(\gamma_2)\\
+    \Phi_\omega(\gamma^{-1}) &= \Phi_\omega(\gamma)^{-1}\\
+    \Phi_{uh}(\gamma) &= h^{-1} \Phi_u(\gamma) h
+    \end{split}
+\end{equation}
+証明は今野微分幾何P156を参照.\\
+このことから,~ホロノミー準同型は準同型写像であることが分かり,~像であるホロノミー群は$G$の部分群であることも分かる.~ホロノミー群$\text{Hol}_u(P, \omega)$は始点$u$に依存するが,~始点を右群作用で移動させるとホロノミー群も共役されるため,~ホロノミー群の共役類は始点に依存しない.\\
+ホロノミー群は最大でも$G$であり,~ホロノミー群が小さいほど接続の大域的な曲がり具合が小さいことを意味する.~ホロノミーを具体的に計算して,~ホロノミーの値と曲率の関係を調べることができればより具体的な情報が得られるだろう.\\
+ホロノミー準同型によって得られた抽象的な群$G$の元をゲージ群の表現$\rho: G \to GL(V)$を用いて観察する.~このとき,~局所座標系で具体的に表すとホロノミーは以下のようになることが分かる.
+\begin{equation}
+    \rho(\Phi_u(\gamma)) = \mathcal{P} \exp \left( i \oint_\gamma A \right) 
+\end{equation}
+しかし,~この行列はゲージ不変量にならないことが分かる.~実際,~主束のゲージ変換$\varphi : P \to P,~ u \mapsto uh(x)$を行うとファイバー内の点が移動するため以下のような共役な変換が生じる.
+\begin{equation}
+    \rho(\Phi_{u}(\gamma)) \to \rho(\Phi_{u\cdot h(x)}(\gamma)) =  h^{-1}(x) \rho(\Phi_u(\gamma)) h(x)
+\end{equation}
+そこで,~ゲージ不変な量を得るために表現行列のトレースを取る.~
+\begin{equation}
+    W_\rho(\gamma)= \text{Tr}_\rho \left[ \mathcal{P} \exp \left( i \oint_\gamma A \right) \right]
+\end{equation}
+これがWilson loopである.~Stokesの定理を用いて書き換えると以下のようになる.
+\begin{equation}
+    W_\rho(\gamma) = \text{Tr}_\rho \left[ \mathcal{P}_\Sigma \exp \left( i \int_\Sigma F \right) \right]
+\end{equation}
+ここで,~$\Sigma$はループ$\gamma$を境界とする任意の面である.~この式はWilson loopが曲率の関数であることを示している.~曲率は各点の接続の局所的な曲がり具合を測る量であるのに対して,~\textbf{ホロノミーは接続の大域的な曲がり具合を測る量}であることが理解できただろう.\\
+このことから,~恒等的に曲率$F$がゼロとなる平坦バンドル上のホロノミーを考えると,~互いにホモトピックな任意の2つのループ $\gamma_1 \sim \gamma_2$ に対して全く同じホロノミーを与える($\Phi_u(\gamma_1) = \Phi_u(\gamma_2)$)~ことが分かる.~よって,~平坦バンドルを考えるときにはホロノミー準同型の定義域を基本群$\pi_1(M, x) = \Omega(M, x)/\sim$に制限しても同じホロノミー群が得られることが分かる.\\
+始点を入れ替えるとホロノミー準同型は共役な変換を受けるため,~同じ定空間上の2つの平坦な主$G$束が互いに同型ならば,~そのホロノミー準同型は共役になることが分かる.~よって,~\textbf{$\Phi_u : \pi_1(M, x) \to G$の共役類は平坦な主$G$束の同型類と1対1に対応する}ことが分かる.~(証明は特性類と幾何学を参照.)
+\subsection{重力とホロノミー}
+ゲージ場の話から重力場の話を考えてみることにする.~重力理論は計量テンソル$g_{\mu\nu}$を基本変数とするEinsteinの定式化が一般的だが,~局所Lorentz群$SO(1,3)$をゲージ群とするゲージ理論として重力を定式化することもできる.~この場合,~曲がった時空上でスピノルを扱うためには,~計量 $g_{\mu\nu}$ ではなく,~局所慣性系を定義するテトラッド$e^a_\mu$ と,~その局所慣性系同士の接続関係を定めるスピン接続 $\omega_\mu^{ab}$ を導入する必要があり,~このスピン接続 $\omega_\mu^{ab}$ は,~局所ローレンツ群 $SO(1,3)$ のゲージ場として全く同じ幾何学的役割を果たす.\\
+そして,~この重力ゲージ場の場の強さ(曲率)を計算すると,~まさにリーマン曲率テンソル $R^{ab}_{\mu\nu}$ が得られる.
+\begin{equation}
+    R^{ab}_{\ \ \mu\nu} = \partial_\mu \omega^{ab}_\nu - \partial_\nu \omega^{ab}_\mu + \omega^a_{\ c\mu} \omega^{cb}_\nu - \omega^a_{\ c\nu} \omega^{cb}_\mu
+\end{equation}
+これは,~Yang-Mills理論における場の強さ $F_{\mu\nu}^a = \partial_\mu A_\nu^a - \partial_\nu A_\mu^a + g f^{abc} A_\mu^b A_\nu^c$ と同じ形をしている.\\
+ゲージ場が $\omega_\mu^{ab}$ であるならば,~重力理論におけるWilson loopを先ほどの式から自然に構築することができる.~局所ローレンツ群の生成子を$J_{ab}$ とすると
+\begin{equation}
+    W(\gamma) = \mathcal{P} \exp \left( i \oint_\gamma \omega_\mu^{ab} J_{ab} dx^\mu \right) = \mathcal{P} \exp \left( i \oint_\gamma \omega_\mu dx^\mu \right)
+\end{equation}
+ベクトルやスピノルを曲がった時空上のループ $\gamma$ に沿って一周平行移動させたとき,~元の位置に戻ってきた対象は元の状態からあるローレンツ変換を受けている.~このズレを引き起こすローレンツ変換の行列そのものが重力理論におけるホロノミー(Wilson loop)である.~ベクトル$V^\mu$を閉じたループ $\gamma$ に沿って平行移動させたとき,~時空が平坦でなければベクトルは回転して以下の量だけずれる.
+\begin{equation}
+    \delta V^\mu \approx \frac{1}{2} \int_\Sigma R^\mu_{\ \nu\rho\sigma} V^\nu d\sigma^{\rho\sigma} 
+\end{equation}
+このことより,~微小なループを考えた場合,~ホロノミー(Wilson loop)は以下のように近似されることが分かる.
+\begin{equation}
+    W(\gamma) \approx \exp \left( \frac{i}{2} \int_\Sigma R^{ab}_{\ \ \mu\nu} J_{ab} d\sigma^{\mu\nu} \right) = \exp \left( \frac{i}{2} \int_\Sigma R_{\mu\nu} d\sigma^{\mu\nu} \right)
+\end{equation}
+この式から,~Riemann曲率テンソルとは.~微小な閉曲線を一周したときに生じるローレンツ変換(ホロノミー)の生成子になることが分かる.~この場合,~ホロノミー準同型は$W : \Omega_1(M) \to SO(1,3)$ となり,~制限ホロノミー群のLie代数は基点 $x$ に平行移動して戻してきたリーマン曲率テンソルの成分によって張られるベクトル空間になる.~(これは非自明な結果であるが,~Ambrose-Singerの定理で保証されていることである.)
+\subsection{ゼミの写真}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{peskin15zemipic.jpg}
+    \caption{ゼミの写真1}
+    \label{fig:my_label1}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{peskin15zemipic2.jpg}
+    \caption{主束上の水平liftとホロノミー}
+    \label{fig:my_label2}
+\end{figure}
+
+\end{document}
