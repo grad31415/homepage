@@ -1,0 +1,1127 @@
+% Build: latexmk (upLaTeX -> dvipdfmx); PDF is next to this file.
+% UTF-8 / upLaTeX -> dvipdfmx
+\documentclass[uplatex,dvipdfmx,a4paper,11pt]{jsarticle}
+\usepackage{lie-notes}
+\newtheorem{lemma}{Lemma}
+
+% メタデータ。本文は \begin{document} より下で編集してください。
+\newcommand{\NotesTitle}{Peskin 6.3 行間埋めノート}
+\newcommand{\NotesBookAuthor}{高原 賢都}
+\newcommand{\NotesBookTitle}{An Introduction to Quantum Field Theory}
+\newcommand{\NotesUpdated}{\today}
+\hypersetup{pdftitle={LPeskin 6.3 行間埋めノート}}
+
+\begin{document}
+
+\begin{center}
+  \vspace*{3mm}
+  {\LARGE\bfseries \NotesTitle\par}
+  \vspace{4mm}
+  {\large \NotesBookAuthor\par}
+  \vspace{1.5mm}
+  {\itshape \NotesBookTitle\par}
+  \vspace{5mm}
+  {\small Peskin 6.3 行間埋めノート\qquad 更新日：\NotesUpdated\par}
+\end{center}
+
+\vspace{5mm}
+\hypertarget{toc}{}
+\tableofcontents　
+\clearpage
+
+% 自動番号のため、{...} に番号は書かず、題名だけを書きます。
+% 題名がなければ {} にしてください。
+\section{The Electron Vertex Function: Evaluation}
+前章では,~Landé の \(g\) 因子の計算が形状因子 \(F_2(0)\) の計算に帰着することを示した.~本章では,~1-loopのFeynman diagramを具体的に計算し\(F_2(0)\) を求める.
+頂点関数 \(\Gamma^\mu\) を摂動展開すると,~下図のようにtree level の寄与に加えて,~最低次の量子補正を表す1-loopのFeynman diagramが現れる.~以下ではこの1ループ補正を \(\delta\Gamma^\mu\) と表す.
+\input{figures/vertex-expansion.tex}
+Feynman rulesに従うと,~この1-loop diagramの寄与は次のように書ける.
+\begin{equation}
+\begin{aligned}
+&\bar u(p')\,\delta\Gamma^\mu(p',p)\,u(p)
+\\[2pt]
+&=\int\frac{d^4k}{(2\pi)^4}\,
+\frac{-ig_{\nu\rho}}{(k-p)^2+i\epsilon}\,
+\bar u(p')(-ie\gamma^\nu)
+\frac{i(\not{k}'+m)}{k'^2-m^2+i\epsilon}\,
+\gamma^\mu
+\frac{i(\not{k}+m)}{k^2-m^2+i\epsilon}\,
+(-ie\gamma^\rho)u(p)
+\\[2pt]
+&=2ie^2\int\frac{d^4k}{(2\pi)^4}\,
+\frac{
+\bar u(p')
+\left[
+\not{k}\gamma^\mu\not{k}'
++m^2\gamma^\mu
+-2m(k+k')^\mu
+\right]u(p)
+}{
+\bigl((k-p)^2+i\epsilon\bigr)
+\bigl(k'^2-m^2+i\epsilon\bigr)
+\bigl(k^2-m^2+i\epsilon\bigr)
+}.
+\end{aligned}
+\end{equation}
+\begin{myproof}
+  2行目から3行目の式変形では式を展開して,~$\gamma$行列の反交換関係 \(\{\gamma^\mu,\gamma^\nu\}=2g^{\mu\nu}\) を使う必要がある.\\
+  被積分関数の分子のうち,~spinorの間に挟まれた部分$÷ie^2$~は,~次のように展開できる.
+\[
+\begin{aligned}
+&\gamma^\nu(\not{k}'+m)\gamma^\mu(\not{k}+m)\gamma_\nu =
+\gamma^\nu\not{k}'\gamma^\mu\not{k}\gamma_\nu
++m\gamma^\nu\not{k}'\gamma^\mu\gamma_\nu
++m\gamma^\nu\gamma^\mu\not{k}\gamma_\nu
++m^2\gamma^\nu\gamma^\mu\gamma_\nu.
+\end{aligned}
+\]
+ここで,~縮約公式
+\[
+\begin{aligned}
+\gamma^\nu\gamma^\alpha\gamma_\nu
+&=-2\gamma^\alpha,\\
+\gamma^\nu\gamma^\alpha\gamma^\beta\gamma_\nu
+&=4g^{\alpha\beta},\\
+\gamma^\nu\gamma^\alpha\gamma^\mu\gamma^\beta\gamma_\nu
+&=-2\gamma^\beta\gamma^\mu\gamma^\alpha
+\end{aligned}
+\]
+を用いると,~各項はそれぞれ
+\[
+\begin{aligned}
+\gamma^\nu\not{k}'\gamma^\mu\not{k}\gamma_\nu
+&=k'_\alpha k_\beta\,
+  \gamma^\nu\gamma^\alpha\gamma^\mu\gamma^\beta\gamma_\nu
+=-2\not{k}\gamma^\mu\not{k}',
+\\[6pt]
+m\gamma^\nu\not{k}'\gamma^\mu\gamma_\nu
+&=mk'_\alpha\,
+  \gamma^\nu\gamma^\alpha\gamma^\mu\gamma_\nu
+=4mk'^\mu,
+\\[6pt]
+m\gamma^\nu\gamma^\mu\not{k}\gamma_\nu
+&=mk_\alpha\,
+  \gamma^\nu\gamma^\mu\gamma^\alpha\gamma_\nu
+=4mk^\mu,
+\\[6pt]
+m^2\gamma^\nu\gamma^\mu\gamma_\nu
+&=-2m^2\gamma^\mu.
+\end{aligned}
+\]
+となる.~これらをまとめると，
+\[
+\gamma^\nu(\not{k}'+m)\gamma^\mu(\not{k}+m)\gamma_\nu
+=-2\left[
+\not{k}\gamma^\mu\not{k}'
++m^2\gamma^\mu
+-2m(k+k')^\mu
+\right]
+\]
+を得る.~よって,~示された.
+\end{myproof}
+この積分を実行するのは容易ではないが,~Feynman parameter 法を用いることで解析的に解くことができる.
+\subsection{Feynman Parameters}
+まずは分母にプロパゲーター由来の二つの因子がある場合から考える.~
+\begin{mylemma}{equation (6.39)}
+\begin{equation}
+\begin{aligned}
+\frac{1}{AB}
+&=\int_0^1 dx\,
+\frac{1}{[xA+(1-x)B]^2}
+=\int_0^1 dx\,dy\,
+\delta(x+y-1)\,
+\frac{1}{[xA+yB]^2}
+\end{aligned} 
+\end{equation}
+\end{mylemma}
+
+\begin{proof}
+  2式目から3式目はデルタ関数の性質より明らかなので,~示すべきは2式目から1式目である.\\
+  $u= xA + (1-x)B = B+(A-B)x$ とすると,~$du = (A-B)dx$ となり,~積分は
+  \[
+  \begin{aligned}
+    \int_0^1 dx\,\frac{1}{[xA+(1-x)B]^2} = \frac{1}{A-B} \int_B^A \frac{du}{u^2} 
+    = \frac{1}{A-B}\left( \frac{1}{B} - \frac{1}{A} \right)
+  \end{aligned}
+  \]
+  となるので示された.~
+\end{proof}
+この積分の使用例として以下のようなものがあげられる.\\
+$A=(k-p)^2,~B=k^2-m^2$ を代入することで,~
+\[
+\begin{aligned}
+\frac{1}{(k-p)^2(k^2-m^2)}
+&=\int_0^1 dx\,dy\,\delta(x+y-1)\,
+\frac{1}{[x(k-p)^2+y(k^2-m^2)]^2}
+\\
+&=\int_0^1 dx\,dy\,\delta(x+y-1)\,
+\frac{1}{[k^2-2xk\cdot p+xp^2-ym^2]^2}
+\end{aligned}
+\]
+が得られる.~\\
+ここで \(\ell=k-xp\) とおくと,~分母は \(\ell^2\) のみに依存する.~
+$dk^4 = d\ell^4$ であり,~被積分関数は \(\ell\) に関して球対称になるため,~積分はずっと容易になることが分かるだろう.~
+このような積分計算を簡単にできるパラメータ$x,y$~のことを\textbf{Feynman parameters}という.\\
+このような2つのプロパゲーター由来の積分はQEDにおける電子の1ループ自己エネルギーなどで現れる.~
+\input{figures/electron-self-energy.tex}
+しかし,~今回計算する積分はプロパゲーター由来の因子が3つあるため,~このままでは計算ができない.~そこで,~別の積分を考える.
+\begin{mylemma}{equation (6.40)}
+  \begin{equation}
+\begin{aligned}
+\frac{1}{AB^n}
+=\int_0^1 dx\,dy\,
+\delta(x+y-1)\,
+\frac{ny^{n-1}}{[xA+yB]^{n+1}}
+\end{aligned} 
+\end{equation}
+\end{mylemma}
+
+\begin{myproof}
+先ほど示した
+\[
+\frac{1}{AB}
+=
+\int_0^1 dx\,dy\,\delta(x+y-1)
+\frac{1}{(xA+yB)^2}
+\]
+の両辺に \(\left(-\frac{\partial}{\partial B}\right)^{n-1}\) を作用させると,~左辺は
+\[
+\left(-\frac{\partial}{\partial B}\right)^{n-1}
+\frac{1}{AB}
+=
+\frac{(n-1)!}{AB^n}
+\]
+右辺の被積分関数は
+\[
+\left(-\frac{\partial}{\partial B}\right)^{n-1}
+\frac{1}{(xA+yB)^2}
+=
+\frac{n!\,y^{n-1}}{(xA+yB)^{n+1}}
+\]
+となるので,
+\[
+\frac{(n-1)!}{AB^n}
+=
+\int_0^1 dx\,dy\,\delta(x+y-1)
+\frac{n!\,y^{n-1}}{(xA+yB)^{n+1}}.
+\]
+よって示された.~  
+\end{myproof}
+\begin{mylemma}{equation (6.41)}
+  \begin{equation}
+    \begin{aligned}
+\frac{1}{A_1A_2\cdots A_n}
+=
+\int_0^1 dx_1\cdots dx_n\,
+\delta\!\left(\sum_{i=1}^n x_i-1\right)
+\frac{(n-1)!}{[x_1A_1+x_2A_2+\cdots+x_nA_n]^n}
+    \end{aligned}
+  \end{equation}
+\end{mylemma}
+
+\begin{myproof}
+  数学的帰納法で示す.~$n=2$の場合はLemma~1.1 と同じである.\\
+  一般の$n$について成立すると仮定する.~両辺を$A_{n+1}$で割り,
+\[
+\frac{1}{A_1\cdots A_nA_{n+1}} = 
+(n-1)!\int dx_1\cdots dx_n\,
+\delta\!\left(\sum_{i=1}^n x_i-1\right)\,
+\frac{1}{A_{n+1}[x_1A_1+x_2A_2+\cdots+x_nA_n]^n}
+\]
+となる.~ここで被積分関数にLemma~1.3 を使用すると,
+\[
+\begin{aligned}
+\frac{1}{
+  A_{n+1}\left(\sum_{i=1}^{n}x_iA_i\right)^n
+}
+&=
+n\int_0^1 dt\,ds\,\delta(s+t-1)\,
+\frac{t^{n-1}}{
+  \left[sA_{n+1}+t\sum_{i=1}^{n}x_iA_i\right]^{n+1}
+}
+\\[6pt]
+&=
+n\int_0^1 dt\,
+\frac{t^{n-1}}{
+  \left[(1-t)A_{n+1}+t\sum_{i=1}^{n}x_iA_i\right]^{n+1}
+}.
+\end{aligned}
+\]
+となる.~よって,~
+\[
+\frac{1}{A_1\cdots A_{n+1}}
+=
+n!\int dx_1\cdots dx_n\,
+\delta\!\left(\sum_{i=1}^n x_i-1\right)\int_0^1dt\,
+\frac{t^{n-1}}
+{\left[(1-t)A_{n+1}
++t\sum_{i=1}^n x_iA_i\right]^{n+1}}.
+\]
+ここで,~新しい変数を
+\[
+z_i=tx_i\quad(i=1,\ldots,n),
+\qquad
+z_{n+1}=1-t
+\]
+で定義する.~このとき,~
+\[
+\delta\!\left(\sum_{i=1}^n x_i-1\right) = t\delta\!\left(\sum_{i=1}^n z_i-t\right) = t\delta\!\left(\sum_{i=1}^{n+1} z_i-1\right)
+\]
+を満たし,~変数変換のヤコビアンは,
+\[
+\left|
+\frac{\partial(z_1,\ldots,z_{n+1})}
+{\partial(x_1,\ldots,x_{n},t)}
+\right|
+=||\text{diag}(t,\cdots,t,-1)|| = t^n
+\]
+となるので,~
+\[
+\frac{1}{A_1\cdots A_{n+1}}
+=\int dz_1\cdots dz_{n+1}\,
+\delta\!\left(\sum_{i=1}^{n+1} z_i-1\right)
+\frac{n!}
+{[z_1A_1+z_2A_2+\cdots+z_{n+1}A_{n+1}]^{n+1}}.
+\]
+よって帰納法によって示された.~
+\end{myproof}
+
+\begin{mylemma}{equation (6.42)}
+\[
+\frac{1}{A_1^{m_1}\cdots A_n^{m_n}}
+=
+\frac{\Gamma(m_1+\cdots +m_n)}{\Gamma(m_1)\cdots\Gamma(m_n)}
+\int_0^1dx_1\cdots dx_n\,
+\delta\!\left(\sum_{i=1}^n x_i-1\right)
+\frac{\prod_{i=1}^n x_i^{m_i-1}}
+{\left(\sum_{i=1}^n x_iA_i\right)^{m_1+\cdots +m_n}}
+\]
+\end{mylemma}
+この式は$m_i$が正整数でない場合にも成立する.~
+\begin{myproof}
+  $m_i$が正整数のとき\\
+\[
+\mathcal D
+\equiv
+\prod_{i=1}^n
+\left(-\frac{\partial}{\partial A_i}\right)^{m_i-1},\qquad
+M\equiv\sum_{i=1}^n m_i,
+\qquad
+S\equiv\sum_{i=1}^n x_iA_i
+\]
+という記号を導入する.~微分演算子$\mathcal{D}$を Lemma~1.3 に作用させることを考える.
+\[
+\left(-\frac{\partial}{\partial A_i}\right)^{m_i-1}
+\frac{1}{A_i}
+=
+\frac{(m_i-1)!}{A_i^{m_i}}
+\]
+なので,~左辺については
+\[
+\mathcal D\left(\frac{1}{A_1\cdots A_n}\right)
+=
+\frac{\prod_{i=1}^n(m_i-1)!}
+{\prod_{i=1}^n A_i^{m_i}}.
+\]
+が成立する.~右辺の微分は少々ややこしいが,~
+\[
+\left(-\frac{\partial}{\partial A_i}\right)^r \left(\sum_{i=1}^n x_iA_i\right)^{-s}
+=
+s(s+1)\cdots(s+r-1)\,
+x_i^r\left(\sum_{i=1}^n x_iA_i\right)^{-s-r}
+\]
+が成り立つことを用いれば楽に計算できる.~全微分回数は$M-n$なので上式を$n$回使うことを考えると,
+\[
+\begin{aligned}
+\mathcal D S^{-n}
+&=
+n(n+1)\cdots(M-1)\,
+\frac{\prod_{i=1}^n x_i^{m_i-1}}{\left(\sum_{i=1}^n x_iA_i\right)^M}\\
+&=
+\frac{(M-1)!}{(n-1)!}\,
+\frac{\prod_{i=1}^n x_i^{m_i-1}}{\left(\sum_{i=1}^n x_iA_i\right)^M}
+\end{aligned}
+\]
+となる.~Lemma~1.3 にもともとある係数 \((n-1)!\) と合わせることで,~
+\[
+\frac{\prod_i(m_i-1)!}{\prod_i A_i^{m_i}}
+=
+(M-1)!\int_0^1dx_1\cdots dx_n\,
+\delta\!\left(\sum_{i=1}^n x_i-1\right)\,
+\frac{\prod_i x_i^{m_i-1}}{(\sum_i x_iA_i)^M}.
+\]
+となるので,~\(\Gamma(m_i)=(m_i-1)!\) を用いることで
+\[
+\frac{1}{A_1^{m_1}\cdots A_n^{m_n}}
+=
+\frac{\Gamma(m_1+\cdots +m_n)}{\Gamma(m_1)\cdots\Gamma(m_n)}
+\int_0^1dx_1\cdots dx_n\,
+\delta\!\left(\sum_{i=1}^n x_i-1\right)
+\frac{\prod_{i=1}^n x_i^{m_i-1}}
+{\left(\sum_{i=1}^n x_iA_i\right)^{m_1+\cdots +m_n}}
+\]
+は示された.~\\\\
+$m_i$が正整数でない正の実数であるとき,~最後のガンマ関数の式変形は単純にはできなくなる.~そこで,~Schwinger parametrization
+\[
+\frac{1}{A_i^{m_i}}
+=
+\frac{1}{\Gamma(m_i)}
+\int_0^\infty dt_i\,
+t_i^{m_i-1}e^{-A_it_i}
+\]
+を使って式変形すると示すことができる.~この式は例えば,~4次元 $\phi^4$ theory の 2-loop での繰り込みなどで使うことがある.
+\end{myproof}
+\subsection{Evaluation of the Form Factors}
+Lemma ~1.3 の式を用いると,~式(1)の分母は以下のようになる.
+\[
+\begin{aligned}
+\frac{1}{
+\bigl((k-p)^2+i\epsilon\bigr)
+\bigl(k'^2-m^2+i\epsilon\bigr)
+\bigl(k^2-m^2+i\epsilon\bigr)}
+=
+\int_0^1 dx\,dy\,dz\,
+\delta(x+y+z-1)\,\frac{2}{D^3}.
+\end{aligned}
+\]
+ここで,~分母の$D$は$x+y+z=1,~k'=k+q$を用いると,
+\[
+\begin{aligned}
+D
+&=x(k^2-m^2)+y(k'^2-m^2)+z(k-p)^2
+  +(x+y+z)i\epsilon
+\\
+&=xk^2-xm^2+yk^2+2yk\cdot q+yq^2-ym^2+zk^2-2zk\cdot p+zp^2
+  +(x+y+z)i\epsilon
+\\
+&=k^2+2k\cdot(yq-zp)+yq^2+zp^2
+  -(x+y)m^2+i\epsilon.
+\end{aligned}
+\]
+と表せる.~次に平方完成をしたいので,~積分変数を
+\[
+\ell\equiv k+yq-zp
+\]
+のようにずらす.~そうすると,~$D$は
+\[
+\begin{aligned}
+D
+&=\ell^2-(yq-zp)^2+yq^2+zp^2-(1-z)m^2+i\epsilon\\
+&=\ell^2+(y-y^2)q^2+(z-z^2)p^2
++2yz\,p\cdot q-(1-z)m^2+i\epsilon.
+\end{aligned}
+\]
+となる.~ここで,~$p^2=p'^2=m^2,~p'=p+q$ が成立するので,
+\[
+m^2=(p+q)^2=m^2+2p\cdot q+q^2
+\quad\Longrightarrow\quad
+2p\cdot q=-q^2.
+\]
+となる.~したがって代入すると,
+\[
+\begin{aligned}
+D
+&=\ell^2+(y-y^2-yz)q^2
++\bigl[z-z^2-(1-z)\bigr]m^2+i\epsilon\\
+&=\ell^2+y(1-y-z)q^2-(1-z)^2m^2+i\epsilon\\
+&=\ell^2+xyq^2-(1-z)^2m^2+i\epsilon,
+\end{aligned}
+\]
+よって,~$D$の表式は
+\[
+D=\ell^2-\Delta+i\epsilon,
+\qquad
+\Delta\equiv-xyq^2+(1-z)^2m^2
+\]
+と表すことができる.~散乱過程では \(q^2<0\) なので,~\(\Delta\) は正であり,~有効的な質量項とみなすことができる.\\
+次に積分を実行するためには分子も$\ell$で表す必要がある.~その計算過程では以下のような積分が有用になる.
+\[
+\int\frac{d^4\ell}{(2\pi)^4}\,
+\frac{\ell^\mu}{D^3}=0
+\]
+\[
+\int\frac{d^4\ell}{(2\pi)^4}\,
+\frac{\ell^\mu\ell^\nu}{D^3}
+=
+\int\frac{d^4\ell}{(2\pi)^4}\,
+\frac{\tfrac14 g^{\mu\nu}\ell^2}{D^3}
+\]
+\begin{myproof}
+  1つ目の積分はparity変換\(\ell\to-\ell\) を行うと測度や分母は変わらないことから示される.\\
+  2つ目の積分を$I^{\mu\nu}$とすると,~分母と積分測度はローレンツ不変であり,~積分には特定の方向を指定するベクトルがないことから
+  \[
+  I^{\mu\nu} = Cg^{\mu\nu}
+  \]
+  と書けることが分かる.~これを縮約すると,
+  \[
+  g_{\mu\nu}I^{\mu\nu} =\int\frac{d^4\ell}{(2\pi)^4}\,
+\frac{\ell^2}{D^3}= Cg_{\mu\nu}g^{\mu\nu}=4C
+  \]
+  となることから,~$C$が決定されるので示された.
+\end{myproof}
+これを用いて分子を整理する.~$\ell^\mu$に比例する項は消えるので,~
+\[
+\begin{aligned}
+\text{分子}
+={}&\bar u(p')
+\left[
+\not{k}\gamma^\mu\not{k}'
++m^2\gamma^\mu
+-2m(k+k')^\mu
+\right]u(p)
+\\
+\longrightarrow{}&
+\bar u(p')
+\Bigl[
+-\frac12\gamma^\mu\ell^2
++(-y\not{q}+z\not{p})\gamma^\mu
+\bigl((1-y)\not{q}+z\not{p}\bigr)
++m^2\gamma^\mu
+-2m\bigl((1-2y)q^\mu+2zp^\mu\bigr)
+\Bigr]u(p).
+\end{aligned}
+\]
+となる.
+\begin{myproof}
+  $k'=k+q$を代入して第1項を展開すると,~
+  \[
+  \begin{aligned}
+      &\gamma_\alpha \gamma^\mu \gamma_\beta (\ell^\alpha-yq^\alpha+zp^\alpha)(\ell^\beta-(y-1)q^\beta+zp^\beta)\\
+  &\to \frac{1}{4}\gamma^\alpha\gamma^\mu \gamma_\alpha \ell^2 +\gamma_\alpha \gamma^\mu \gamma_\beta (-yq^\alpha+zp^\alpha)((1-y)q^\beta+zp^\beta)\\
+  &=-\frac{1}{2}\gamma^\mu \ell^2 + (-y\not{q}+z\not{p})\gamma^\mu \bigl((1-y)\not{q}+z\not{p}\bigr)
+  \end{aligned}
+  \]
+  となる.~同様に3項目は
+  \[
+  \begin{aligned}
+    2m(k+k')^\mu = 2m( 2 \ell^\mu - (2y-1)q^\mu + 2z q^\mu)
+  \end{aligned}
+  \]
+  より,~示された.
+\end{myproof}
+最終的には式全体を$\gamma^\mu$に比例する項と$i\sigma^{\mu\nu}q_\mu$に比例する項の2つにまとめたい.~そのために分子全体を
+\[
+\gamma^\mu A+(p'^\mu+p^\mu)B+q^\mu C
+\]
+という形に変形したい.~$x+y+z=1$に注意しながら,~Dirac方程式や半交換関係を用いることで計算をすると,~
+\[
+\begin{aligned}
+\text{分子}
+=\bar u(p')\Bigl[
+\gamma^\mu
+\left(
+-\frac12\ell^2
++(1-x)(1-y)q^2
++(1-2z-z^2)m^2
+\right)
++(p'^\mu+p^\mu)mz(z-1)
++q^\mu m(z-2)(x-y)
+\Bigr]u(p).
+\end{aligned}
+\]
+となることがわかる.
+\begin{myproof}
+  非自明な2項目から計算をする.~\\
+  \(q=p'-p\) と \(x+y+z=1\) を使うと
+\[
+-y\not q+z\not p=(1-x)\not p-y\not p',
+\]
+\[
+(1-y)\not q+z\not p=(1-y)\not p'-x\not p.
+\]
+となる.~これを代入することで,~
+\[
+\begin{aligned}
+\bar u(p')
+(-y\not q+z\not p)\gamma^\mu
+\left[(1-y)\not q+z\not p\right]u(p)
+={}&
+(1-x)(1-y)\,
+\bar u(p')\not p\gamma^\mu\not p'u(p)
+-x(1-x)\,
+\bar u(p')\not p\gamma^\mu\not p\,u(p)
+\\
+&-y(1-y)\,
+\bar u(p')\not p'\gamma^\mu\not p'u(p)
++xy\,
+\bar u(p')\not p'\gamma^\mu\not p\,u(p)
+\end{aligned}
+\]
+のように展開できる.~半交換関係から
+\[
+\not p\gamma^\mu=2p^\mu-\gamma^\mu\not p,
+\qquad
+\not p\not p'=2p\cdot p'-\not p'\not p
+\]
+が得られるので,~最初の項は
+\[
+\begin{aligned}
+\bar u(p')\not p\gamma^\mu\not p'u(p)
+={}&
+2p^\mu\bar u(p')\not p'u(p)
+-2p\cdot p'\,\bar u(p')\gamma^\mu u(p)
++\bar u(p')\gamma^\mu\not p'\not p\,u(p)\\
+&=2m p^\mu u(p')u(p) - 2p\cdot p' \bar u(p')\gamma^\mu u(p) + m\bar u(p')\gamma^\mu \not p' u(p)\\
+&=2m (p^\mu + p'^\mu)\bar u(p') u(p) -(2p\cdot p' +m^2)\bar u(p')\gamma^\mu u(p)
+\end{aligned}
+\]
+となる.~さらに,~
+\[
+q^2=(p'-p)^2=2m^2-2p\cdot p'
+\]
+を代入すると,~
+\[
+\bar u(p')\not p\gamma^\mu\not p'u(p)
+=(q^2-3m^2)\bar u(p')\gamma^\mu u(p) +2m(p^\mu + p'^\mu) \bar u(p') u(p)
+\]
+となる.~残りの3項も同様に計算をすると,~
+\[
+\begin{aligned}
+\bar u(p')\not p\gamma^\mu\not p\,u(p)
+&=m\bar u(p')\not p\gamma^\mu u(p)\\
+&=2mp^\mu \bar u(p') u(p)-m^2\bar u(p')\gamma^\mu u(p),
+\\[4pt]
+\bar u(p')\not p'\gamma^\mu\not p'u(p)
+&=m\bar u(p')\gamma^\mu\not p'u(p)\\
+&=2mp'^\mu \bar u(p') u(p)-m^2\bar u(p')\gamma^\mu u(p),
+\\[4pt]
+\bar u(p')\not p'\gamma^\mu\not p\,u(p)
+&=m^2\bar u(p')\gamma^\mu u(p)
+\end{aligned}
+\tag{4}
+\]
+となることがわかる.~この4項は$V^\mu \equiv \bar u(p')\gamma^\mu u(p)$のベクトル項,~$S \equiv \bar u(p') u(p)$ のスカラー項に分けれるので,~全てまとめると
+\[
+\begin{aligned}
+\bar u(p')
+(-y\not q+z\not p)\gamma^\mu
+\left[(1-y)\not q+z\not p\right]u(p)={}&
+\Bigl[
+(1-x)(1-y)q^2
++m^2\bigl\{
+-3(1-x)(1-y)
++x(1-x)+y(1-y)+xy
+\bigr\}
+\Bigr]V^\mu
+\\
+&+2m\Bigl[
+(1-x)(1-y)(p^\mu + p'^\mu)
+-x(1-x)p^\mu-y(1-y)p'^\mu
+\Bigr]S
+\end{aligned}
+\]
+ここで$x+y=1-z$~を途中の2項目に代入すると,~
+\[
+\begin{aligned}
+-3(1-x)(1-y)+x(1-x)+y(1-y)+xy
+&=-3+4(x+y)-(x+y)^2\\
+&=-2z-z^2
+\end{aligned}
+\]
+となる.~式変形で整える基底は$P=p+p'$と$q$なので,~$p'^\mu = \frac{P^\mu + q^\mu}{2}$~を代入すると,~
+\[
+\begin{aligned}
+&2m\Bigl[
+(1-x)(1-y)P^\mu
+-x(1-x)p^\mu-y(1-y)p'^\mu
+\Bigr]
+\\
+&\quad=
+m\Bigl[
+\{2(1-x)(1-y)-x(1-x)-y(1-y)\}P^\mu
++\{x(1-x)-y(1-y)\}q^\mu
+\Bigr]
+\\
+&\quad=mz(1+z)P^\mu+mz(x-y)q^\mu
+\end{aligned}
+\]
+となる.~したがって,~
+\[
+\begin{aligned}
+\bar u(p')
+(-y\not q+z\not p)\gamma^\mu
+\left[(1-y)\not q+z\not p\right]u(p)={}&
+\left[(1-x)(1-y)q^2-(2z+z^2)m^2\right]V^\mu +mz(1+z)P^\mu S
++mz(x-y)q^\mu S.
+\end{aligned}
+\]
+分子の非自明な残りの項を
+\[
+(1-2y)q^\mu+2zp^\mu
+=zP^\mu+(x-y)q^\mu
+\]
+と書き直すと,~最終的に積分のなかで有効的になる分子$\mathcal{N}^\mu$は
+\[
+\begin{aligned}
+\mathcal N^\mu_{\mathrm{eff}}
+={}&
+\left[
+-\frac12\ell^2
++(1-x)(1-y)q^2
++(1-2z-z^2)m^2
+\right]V^\mu
+\\
+&+m\left[z(1+z)-2z\right]P^\mu S
++m\left[z-2\right](x-y)q^\mu S.
+\end{aligned}
+\]
+となるので元の表式に戻すと示された.
+\end{myproof}
+前章で議論したように,~Ward identity によって$q^\mu$の係数は最終的にゼロになるはずである.~実際にそうなることを確認するには被積分関数の対称性を考えればよい.~
+被積分関数の分母$D^3$は\(x\leftrightarrow y\) の交換に対して対称であるのに対して分子の$q^\mu$の項は反対称になることから確かに確かめられる.\\
+spinorの間で使える入れ替え~(Gordon identity)
+\[
+2m\gamma^\mu \leftrightarrow P^\mu + i\sigma^{\mu\nu}q_\nu
+\]
+を用いて\((p'+p)\) を \(i\sigma^{\mu\nu}q_\nu\) に置き換えると,~積分に有効的な分子の表式は
+\[
+\mathcal{N}^\mu =u(p')
+\Biggl[
+\gamma^\mu
+\left(
+-\frac12\ell^2
++(1-x)(1-y)q^2
++(1-4z+z^2)m^2
+\right)
++\frac{i\sigma^{\mu\nu}q_\nu}{2m}
+\left(2m^2z(1-z)\right)
+\Biggr]u(p)
+\]
+となるので,~electron vertex への\(O(\alpha)\) の寄与全体は,
+\[
+\begin{aligned}
+\bar u(p')\delta\Gamma^\mu(p',p)u(p)
+={}&2ie^2
+\int\frac{d^4\ell}{(2\pi)^4}
+\int_0^1 dx\,dy\,dz\,
+\delta(x+y+z-1)\frac{2}{D^3}
+\\
+&\times\bar u(p')
+\Biggl[
+\gamma^\mu
+\left(
+-\frac12\ell^2
++(1-x)(1-y)q^2
++(1-4z+z^2)m^2
+\right)
++\frac{i\sigma^{\mu\nu}q_\nu}{2m}
+\left(2m^2z(1-z)\right)
+\Biggr]u(p)
+\end{aligned}
+\]
+となる.~ここで,~これまでと同様に
+\[
+D=\ell^2-\Delta+i\epsilon,
+\qquad
+\Delta=-xyq^2+(1-z)^2m^2>0
+\]
+である.~次に運動量積分を行う.~\(\ell^0\) 積分を複素積分として計算してから空間成分の積分を球座標で行うことも難しくないが,~ここでは\textbf{Wick回転}を用いて計算する.\\
+ここでは$(1,3)$のmostly muinus Minkowski計量を用いているので,~これをEuclian な計量を使って書き直したい.~
+\[
+\ell^2 \equiv {\ell^0}^2 -\boldsymbol{\ell}^2 \equiv - {\ell_E^0}^2-\boldsymbol{\ell_E}^2 = - \ell_E^2
+\]
+のようにEuclidean 4元運動量\(\ell_E\) を
+\[
+\ell^0=-i\ell_E^0,
+\qquad
+\boldsymbol{\ell}=\boldsymbol{\ell}_E
+\]
+で定義する.~この定義によって$\ell^0$の積分経路は被積分関数の極を避けながら実軸上から虚軸上へと変化することが分かる.~
+積分変数を \(\ell_E\) に変えるだけで,~4次元球座標を用いて積分を計算できることが分かる.~まず,~
+\[
+\begin{aligned}
+\int\frac{d^4\ell}{(2\pi)^4}
+\frac{1}{[\ell^2-\Delta]^m}
+&=
+\frac{i}{(-1)^m}\frac{1}{(2\pi)^4}
+\int d^4\ell_E\,
+\frac{1}{[\ell_E^2+\Delta]^m}
+\\
+&=
+\frac{i(-1)^m}{(2\pi)^4}
+\int d\Omega_4
+\int_0^\infty d\ell_E\,
+\frac{\ell_E^3}{[\ell_E^2+\Delta]^m}
+\end{aligned}
+\]
+を計算してみたい.~この節の計算で必要なのは$m=3$の場合だけだが,~一般的な結果は他のloop計算や次元正則化の文脈で役に立つ.~\\
+まず初めに角度方向の積分を考える.
+\begin{mylemma}{surface area of four dimension}
+  \[
+  \int d\Omega_4 = 2\pi^2
+  \]
+\end{mylemma}
+\begin{myproof}
+  4次元球座標を
+  \[
+x=
+\bigl(
+r\sin\omega\sin\theta\cos\phi,\,
+r\sin\omega\sin\theta\sin\phi,\,
+r\sin\omega\cos\theta,\,
+r\cos\omega
+\bigr)
+\]
+と置くと,~積分測度は
+\[
+d^4x
+=r^3\sin^2\omega\sin\theta\,
+d\phi\,d\theta\,d\omega\,dr
+\]
+となる.~ここでの$r^3$は動径方向の積分にかかる.~よって今回計算するべき積分は
+\[
+\begin{aligned}
+  \int d\Omega_4 &= \int_0^\pi d\omega \int_0^\pi  d\theta \int_0^{2\pi} d\phi ~\sin^2\omega\sin\theta\\
+  &= \frac{\pi}{2}\cdot 2\cdot 2\pi = 2\pi^2
+\end{aligned}
+\]
+となるので示された.
+\end{myproof}
+動径方向の積分も計算することによって$m>3$に対して積分を実行することができる.
+\begin{mylemma}{equation (6.49)}
+\[
+\int\frac{d^4\ell}{(2\pi)^4}
+\frac{1}{[\ell^2-\Delta]^m}
+=
+\frac{i(-1)^m}{(4\pi)^2}
+\frac{1}{(m-1)(m-2)}
+\frac{1}{\Delta^{m-2}}
+\]
+\end{mylemma}
+\begin{myproof}
+  残る積分は動径方向のみである.~$u = r^2 +\Delta$ と置き換えると,~$m>2$に対して
+\[
+\begin{aligned}
+\int_0^\infty dr\,
+\frac{r^3}{(r^2+\Delta)^m}
+&=\frac12\int_\Delta^\infty du\,
+\frac{u-\Delta}{u^m}
+\\
+&=\frac12
+\left[
+\int_\Delta^\infty du\,u^{1-m}
+-\Delta\int_\Delta^\infty du\,u^{-m}
+\right]
+\\
+&=\frac12
+\left[
+\frac{\Delta^{2-m}}{m-2}
+-\frac{\Delta^{2-m}}{m-1}
+\right]
+\\
+&=\frac{1}{2(m-1)(m-2)}
+\frac{1}{\Delta^{m-2}}
+\end{aligned}
+\]
+となることから示された.~
+\end{myproof}
+被積分関数には$\ell^2$項もあるので同様に以下の積分も考えておく.
+\begin{mylemma}{equation (6.50)}
+ \[
+\int\frac{d^4\ell}{(2\pi)^4}
+\frac{\ell^2}{[\ell^2-\Delta]^m}
+=
+\frac{i(-1)^{m-1}}{(4\pi)^2}
+\frac{2}{(m-1)(m-2)(m-3)}
+\frac{1}{\Delta^{m-3}}
+\]
+\end{mylemma}
+\begin{myproof}
+   Wick回転により$\ell^2 = -\ell_E^2$となるので
+\[
+\begin{aligned}
+\int\frac{d^4\ell}{(2\pi)^4}
+\frac{\ell^2}{[\ell^2-\Delta]^m}
+&=i(-1)^{m-1}
+\int\frac{d^4\ell_E}{(2\pi)^4}
+\frac{\ell_E^2}{(\ell_E^2+\Delta)^m}
+\\
+&=\frac{i(-1)^{m-1}}{8\pi^2}
+\int_0^\infty dr\,
+\frac{r^5}{(r^2+\Delta)^m}.
+\end{aligned}
+\]
+となる.~同じく \(u=r^2+\Delta\) とおくと,~\(m>3\) に対して
+\[
+\begin{aligned}
+\int_0^\infty dr\,
+\frac{r^5}{(r^2+\Delta)^m}
+&=\frac12\int_\Delta^\infty du\,
+\frac{(u-\Delta)^2}{u^m}
+\\
+&=\frac12\int_\Delta^\infty du\,
+\left(u^{2-m}-2\Delta u^{1-m}+\Delta^2u^{-m}\right)
+\\
+&=\frac{\Delta^{3-m}}{2}
+\left[
+\frac{1}{m-3}
+-\frac{2}{m-2}
++\frac{1}{m-1}
+\right]
+\end{aligned}
+\]
+ここで,
+\[
+\frac{1}{m-3}-\frac{2}{m-2}+\frac{1}{m-1}
+=
+\frac{2}{(m-1)(m-2)(m-3)}
+\]
+が成り立つので,~
+\[
+\int_0^\infty dr\,
+\frac{r^5}{(r^2+\Delta)^m}
+=
+\frac{1}{(m-1)(m-2)(m-3)}
+\frac{1}{\Delta^{m-3}}.
+\]
+よって示された.
+\end{myproof}
+$m=3$のとき,~後者の結果は$1/r$の積分によって対数発散を引き起こすため,~このままではWick回転による計算を正当化できない.~
+この発散の物理的意味については後々考察することにして,~ひとまず積分を有限にするための人為的な処方を導入する.~\\
+初めの式に戻り,~photon propageter において以下の置き換えを行うことにする.
+\[
+\frac{1}{(k-p)^2+i\epsilon}
+\;\longrightarrow\;
+\frac{1}{(k-p)^2+i\epsilon}
+-\frac{1}{(k-p)^2-\Lambda^2+i\epsilon}.
+\]
+ここで\(\Lambda\) は非常に大きな質量であると解釈できる.~この置き換えは\(k\) が小さい領域では被積分関数に影響を与えないが,~\(k\gtrsim\Lambda\) では滑らかにカットオフをかける.
+第2項は仮想的な重い光子のpropageterと考えることができる.~つまり,~その寄与を通常のmassless photonの寄与から差し引く処方である.~\\
+もし仮にmassless photon propageter が仮想的な重い光子のpropageterになったとすると,~その場合の$\Delta_\Lambda$は以下のようになる.
+\[
+\Delta_\Lambda
+=-xyq^2+(1-z)^2m^2+z\Lambda^2
+\]
+\begin{myproof}
+  仮想的な重い光子のpropageterの分母は
+\[
+(k-p)^2-\Lambda^2+i\epsilon
+\]
+なので,~その場合の$D_{\Lambda}$は従来の$D$を用いて
+\[
+\begin{aligned}
+D_\Lambda
+&=x(k^2-m^2)+y(k'^2-m^2)
++z\bigl((k-p)^2-\Lambda^2\bigr)+i\epsilon
+\\
+&=\underbrace{
+x(k^2-m^2)+y(k'^2-m^2)+z(k-p)^2+i\epsilon
+}_{D}
+-z\Lambda^2
+\\
+&=D-z\Lambda^2.
+\end{aligned}
+\]
+と書ける.~$D=\ell^2-\Delta+i \epsilon$~なので示された.
+\end{myproof}
+このことから,~仮想的な重いphotonを差し引く処方によって積分範囲は$\Delta\to\Delta_\Lambda$になるので,~$m=3$の場合においても
+\[
+\begin{aligned}
+&\int\frac{d^4\ell}{(2\pi)^4}
+\left(
+\frac{\ell^2}{[\ell^2-\Delta]^3}
+-\frac{\ell^2}{[\ell^2-\Delta_\Lambda]^3}
+\right)
+\\
+&\qquad=
+\frac{i}{(4\pi)^2}
+\int_0^\infty d\ell_E^2
+\left(
+\frac{\ell_E^4}{[\ell_E^2+\Delta]^3}
+-\frac{\ell_E^4}{[\ell_E^2+\Delta_\Lambda]^3}
+\right)
+\\
+&\qquad=
+\frac{i}{(4\pi)^2}
+\log\!\left(\frac{\Delta_\Lambda}{\Delta}\right).
+\end{aligned}
+\]
+となり,~収束する積分に置き換えられ,~Wick回転による積分計算を実行することができる.~分子の$\ell^2$に比例しない有限項もこの処方により
+\[
+\int\frac{d^4\ell}{(2\pi)^4}\frac{1}{[\ell^2-\Delta]^3} \to 
+\frac{i(-1)^3}{(4\pi)^2}
+\frac{1}{(3-1)(3-2)}
+\left( \frac{1}{\Delta^{3-2}} - \frac{1}{{\Delta_\Lambda}^{3-2}} \right)
+\]
+となり,~$1/\Delta \sim 1/\Lambda^2$ 程度の補正が加わるが,~これは十分小さいと予想できるので無視する.~\\
+このように仮想的な重い粒子を導入してFeynman 積分を有限にする処方を,~\textbf{Pauri-Villars 正則化}と呼ぶ.~
+仮想的な光子には物理的な意味がなく,~発散積分を定義するための数ある方法の一つにすぎないことに注意するべきであり,~他の方法は次章(sec7.2)で再度議論する.
+新しく導入したパラメータ \(\Lambda\) が，観測可能な断面積の最終結果に現れないことを期待しなければならない.\\
+これらの結果を用いて計算をすると,~1-loop 頂点補正に対して具体的な式が得られる.
+\[
+\begin{aligned}
+\bar u(p')\delta\Gamma^\mu(p',p)u(p)
+=&
+\frac{\alpha}{2\pi}
+\int_0^1 dx\,dy\,dz\,
+\delta(x+y+z-1)
+\\
+&\times\bar u(p')
+\Biggl(
+\gamma^\mu
+\Biggl[
+\log\frac{z\Lambda^2}{\Delta}
++\frac{1}{\Delta}
+\left(
+(1-x)(1-y)q^2
++(1-4z+z^2)m^2
+\right)
+\Biggr]
++\frac{i\sigma^{\mu\nu}q_\nu}{2m}
+\left[
+\frac{1}{\Delta}\,2m^2z(1-z)
+\right]
+\Biggr)u(p)
+\end{aligned}
+\]
+ここで,~$F_1$に含まれる紫外発散と赤外発散をパラメータで表すことができたが,~この紫外発散は本来は$1$に固定されていたはずの\(F_1(q^2=0)\) を補正する.~つまり,~頂点の1ループ図だけを計算すると
+\[
+F_1^{\mathrm{vertex}}(q^2)
+=1+\delta F_1^{\mathrm{vertex}}(q^2)
+\]
+となり,~一般には$\delta F_1^{\mathrm{vertex}}(q^2) \neq 0$ である(またさらに紫外発散も含まれている)ので,~頂点の1ループ図だけでは物理的な電子の散乱振幅の計算がまだ完成していないということが想像できる.
+相互作用を含む電子のpropageterは物理的な質量の近傍で
+\[
+S(p)\simeq
+\frac{iZ_2(\not p+m)}{p^2-m^2+i\epsilon}
+\]
+とかけることから,~外線を取り除いた頂点に対してincoming,~outgoingの電子からそれぞれ規格化として\(\sqrt{Z_2}\) が掛かり,~電子外線の因子を含めた頂点部分は
+\[
+Z_2\,\bar u(p')\Gamma^\mu u(p)
+\]
+となる.~ここで$Z_2 = 1 +\delta Z_2$ とおいて1-loopまで展開すると,~$\gamma^\mu$の係数部分は
+\[
+\begin{aligned}
+F_1^{\mathrm{phys}}(q^2)
+&=(1+\delta Z_2)
+\left[1+\delta F_1^{\mathrm{vertex}}(q^2)\right]\\
+&=1+\delta F_1^{\mathrm{vertex}}(q^2)
++\delta Z_2+O(\alpha^2)
+\end{aligned}
+\]
+となり,~Ward恒等式によって$\delta Z_2 = -\delta F_1^{\mathrm{vertex}}(0)$ という関係を与えるので,~物理的なform factorは
+\[
+F_1^{\mathrm{phys}}(q^2)
+=
+1+\delta F_1^{\mathrm{vertex}}(q^2)
+-\delta F_1^{\mathrm{vertex}}(0)
++O(\alpha^2)
+\]
+となる.~実際,~このような表式を実現する変換
+\[
+\delta F_1^{\mathrm{vertex}}(q^2)\to \delta F_1^{\mathrm{vertex}}(q^2)
+-\delta F_1^{\mathrm{vertex}}(0)
+\]
+を考えることで共通の紫外発散の因子を相殺してrenormalizedできていることが分かる.~今回の場合には被積分関数が
+\[
+\begin{aligned}
+\log \frac{z\Lambda^2}{\Delta(q^2)}&\to \log \frac{z\Lambda^2}{\Delta(q^2)}-\log \frac{z\Lambda^2}{\Delta(0)}\\
+&=\log\frac{\Delta(q^2)}{\Delta(0)}\\
+&=\log\!\left(
+\frac{m^2(1-z)^2}{m^2(1-z)^2-q^2xy}
+\right)
+\end{aligned}
+\]
+のように変化する.\\
+次に\(1/\Delta\) の項に由来する赤外発散の取り扱いについて考える.~例えば\(q^2=0\) でこの項は
+\[
+\begin{aligned}
+\int_0^1 dx\,dy\,dz\,
+\delta(x+y+z-1)\,
+\frac{1-4z+z^2}{\Delta(q^2=0)}
+&=
+\int_0^1 dz\int_0^{1-z}dy\,
+\frac{-2+(1-z)(3-z)}{m^2(1-z)^2}
+\\
+&=
+\int_0^1 dz\,
+\frac{-2}{m^2(1-z)}
++\text{finite term}
+\end{aligned}
+\]
+となる.~この問題は光子が小さい非零の質量 \(\mu\) を持つと仮定することで対処できる.~その場合,~photon propageterの分母にある \((k-p)^2\) は
+\[
+(k-p)^2\to (k-p)^2-\mu^2
+\]
+となる.~先ほどと同様に,~この変換によって$\Delta$は$\Delta + z\mu^2$に変化することによって積分の発散項は有限値になる.\\
+赤外発散と紫外発散を取り除く2つの修正をすることで,~それぞれの形状因子は次のようになる.
+\[
+\begin{aligned}
+F_1(q^2)
+={}&1+\frac{\alpha}{2\pi}
+\int_0^1 dx\,dy\,dz\,\delta(x+y+z-1)
+\\
+&\times\Biggl[
+\log\!\left(
+\frac{m^2(1-z)^2}{m^2(1-z)^2-q^2xy}
+\right)
++\frac{
+m^2(1-4z+z^2)+q^2(1-x)(1-y)
+}{
+m^2(1-z)^2-q^2xy+\mu^2z
+}
+-\frac{m^2(1-4z+z^2)}
+{m^2(1-z)^2+\mu^2z}
+\Biggr]
++O(\alpha^2),
+\end{aligned}
+\tag{6.56}
+\]
+\[
+F_2(q^2)
+=
+\frac{\alpha}{2\pi}
+\int_0^1dx\,dy\,dz\,\delta(x+y+z-1)
+\left[
+\frac{2m^2z(1-z)}
+{m^2(1-z)^2-q^2xy}
+\right]
++O(\alpha^2)
+\]
+\(F_2(q^2)\) には紫外発散も赤外発散も影響しないので,~\(F_2(q^2=0)\) は曖昧さなく計算でき,
+\[
+\begin{aligned}
+F_2(q^2=0)
+&=
+\frac{\alpha}{2\pi}
+\int_0^1dx\,dy\,dz\,\delta(x+y+z-1)
+\frac{2m^2z(1-z)}{m^2(1-z)^2}
+\\
+&=
+\frac{\alpha}{\pi}
+\int_0^1dz\int_0^{1-z}dy\,
+\frac{z}{1-z}
+=\frac{\alpha}{2\pi}
+\end{aligned}
+\]
+となる.~こうして,~電子の$g$因子に対する補正として
+\[
+a_e\equiv\frac{g-2}{2}
+=\frac{\alpha}{2\pi}
+\simeq0.0011614
+\]
+を得ることができた.~この結果は1948年にSchwingerによって初めて導かれた.~当時の実験によればその値は
+\[
+a_e=0.0011597
+\]
+であり,~ここで求めた \(F_2(0)\) の値は明らかに正しく,~さらに \(\alpha\) の高次まで計算しても曖昧さなく正しい結果が得られるようである.
+\subsection{Precision Tests of QED}
+Schwingerによる電子の異常磁気モーメントの導出以来,~QEDの理論計算と実験測定はともに大きく進歩した.~
+現在,~電子の異常磁気モーメントのQED寄与は5-loop,~すなわち \(\alpha^5\) の次数まで計算されている.~\url{https://arxiv.org/abs/2505.21476}
+\[
+a_e^{\mathrm{theory}}
+\simeq 0.00115965218
+\]
+実験では,~ペニングトラップに閉じ込めた単一電子のサイクロトロン運動とスピンに関する遷移を精密に測定する.~2023年に公表された測定値は
+\[
+a_e^{\mathrm{exp}}
+=0.00115965218059(13)
+\]
+であり,~$g/2$ の相対不確かさは約 $(1.3\times10^{-13})$ に達している.~\url{https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.130.071801}\\
+ただし,~この実験精度がそのまま理論の検証精度を意味するわけではない.~理論値を求めるために必要な微細構造定数 $\alpha$ の不確かさも考慮する必要がある.
+QEDを独立に検証するには,~電子の異常磁気モーメントとは別の測定から $\alpha$ を求め,~その値を理論式に代入することが重要である.
+現在の代表的な方法は,~原子干渉計を用いたルビジウム原子やセシウム原子の光子反跳の測定などがあげられる.~\\
+
+
+
+\end{document}
